@@ -13387,7 +13387,7 @@ function limpar()
                 $$(".version").html("Versão: "+version);
             });
 
-            var push = PushNotification.init({
+            const push = PushNotification.init({
                 android: {
                     icon: "icon-notification"
                 },
@@ -13399,14 +13399,14 @@ function limpar()
                 },
                 windows: {}
             });
-            push.on('registration', function(data) {
+            push.on('registration', (data) => {
                 console.log('APARELHO REGISTRADO:' + data.registrationId);
                 localStorage.setItem("token", data.registrationId);
                 // data.registrationId
                 //$('#push').html(data.registrationId);
             });
             
-            push.on('notification', function(data) {
+            push.on('notification', (data) => {
 
                 //$('#push').html(data);
                 if (data.additionalData.foreground) {
@@ -13647,7 +13647,7 @@ function limpar()
                 console.log('INFO: ' + data.additionalData.info);
             });
 
-            push.on('error', function(e) {
+            push.on('error', (e) => {
                 console.log(e.message);
                 //$('#push').html(e.message);
             });
