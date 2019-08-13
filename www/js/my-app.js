@@ -418,7 +418,21 @@ function badge(){
                             }
                         });
 
-
+                        var totalviews = 0;
+                        var comuncomunicadonotviews = localStorage.getItem("viewscondominio") ? localStorage.getItem("viewscondominio") : 0;
+                        var comuncomunportarianotviews = localStorage.getItem("viewsportaria") ? localStorage.getItem("viewsportaria") : 0;
+                        var comuncomunmoradornotviews = localStorage.getItem("viewsmorador") ? localStorage.getItem("viewsmorador") : 0;
+                        totalviews = parseInt(comuncomunicadonotviews) + parseInt(comuncomunportarianotviews) + parseInt(comuncomunmoradornotviews);
+                        console.log("comuncomunicadonotviews "+comuncomunicadonotviews);
+                        console.log("comuncomunportarianotviews "+comuncomunportarianotviews);
+                        console.log("comuncomunmoradornotviews "+comuncomunmoradornotviews);
+                        
+                        if (totalviews>0) {
+                            //coloca numero de nao visualizados
+                            $('.badgecomunicado').html('<span class="badge bg-red">'+totalviews+'</span>');
+                        }else{
+                            $('.badgecomunicado span').hide();
+                        }  
 
 
                     }else{
@@ -439,22 +453,6 @@ function badge(){
 
                 }
             });
-
-            var totalviews = 0;
-            var comuncomunicadonotviews = localStorage.getItem("viewscondominio") ? localStorage.getItem("viewscondominio") : 0;
-            var comuncomunportarianotviews = localStorage.getItem("viewsportaria") ? localStorage.getItem("viewsportaria") : 0;
-            var comuncomunmoradornotviews = localStorage.getItem("viewsmorador") ? localStorage.getItem("viewsmorador") : 0;
-            totalviews = parseInt(comuncomunicadonotviews) + parseInt(comuncomunportarianotviews) + parseInt(comuncomunmoradornotviews);
-            console.log("comuncomunicadonotviews "+comuncomunicadonotviews);
-            console.log("comuncomunportarianotviews "+comuncomunportarianotviews);
-            console.log("comuncomunmoradornotviews "+comuncomunmoradornotviews);
-            
-            if (totalviews>0) {
-                //coloca numero de nao visualizados
-                $('.badgecomunicado').html('<span class="badge bg-red">'+totalviews+'</span>');
-            }else{
-                $('.badgecomunicado span').hide();
-            }  
 
         }else{
 
@@ -6302,9 +6300,9 @@ $$('#cadastro-teste').on('click', function(){
         
         if ($$('#txtcodcondominio').val()=="") {
 
-            $$idcondominio = "37";
-            $$idbloco = "1924";
-            $$iddomicilio = "7595";
+            $$idcondominio = "87";
+            $$idbloco = "2239";
+            $$iddomicilio = "11240";
             $$txtNomeAddMorador = $$('#txtnomeaddmoradorteste').val();
             $$txtEmailAddMorador = $$('#txtemailaddmoradorteste').val();
             $$cellPhoneaddMorador = $$('#cellphoneaddmoradorteste').val();
@@ -13359,7 +13357,7 @@ function limpar()
             //window.ga.startTrackerWithId("UA-108232712-1", 10);
             if(device.platform.toLowerCase() === "android"){
                 //StatusBar.overlaysWebView(true);
-                StatusBar.backgroundColorByHexString('#003055d9');
+                StatusBar.backgroundColorByHexString('#ff3055d9');
             }
 
             function TrackButtonClicked() {
