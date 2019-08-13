@@ -61,6 +61,7 @@ function mplaca(v){
 var $$ = Dom7;
 
 var $server = 'https://aptohome.com.br/admin/';
+var $apiKey = '';
 //var $apiKey = 'AIzaSyC55_b17t0ZaziJLHdk1oyIFHY5pSvcIcA';
 var imagemPerf;
 var tabindex = 1;
@@ -13358,7 +13359,7 @@ function limpar()
             //window.ga.startTrackerWithId("UA-108232712-1", 10);
             if(device.platform.toLowerCase() === "android"){
                 //StatusBar.overlaysWebView(true);
-                StatusBar.backgroundColorByHexString('#333055d9');
+                StatusBar.backgroundColorByHexString('#003055d9');
             }
 
             function TrackButtonClicked() {
