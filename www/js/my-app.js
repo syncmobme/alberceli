@@ -13357,7 +13357,7 @@ function limpar()
 
             //window.ga.startTrackerWithId("UA-108232712-1", 10);
             if(device.platform.toLowerCase() === "android"){
-                StatusBar.overlaysWebView(true);
+                //StatusBar.overlaysWebView(true);
                 StatusBar.backgroundColorByHexString('#333055d9');
             }
 
@@ -13389,9 +13389,11 @@ function limpar()
 
             const push = PushNotification.init({
                 android: {
+                    senderID: "582224740202",
                     icon: "iconnotification"
                 },
                 ios: {
+                    senderID: "582224740202",
                     gcmSandbox: "true", // false para producao true para desenvolvimento
                     alert: "true",
                     sound: "true",
