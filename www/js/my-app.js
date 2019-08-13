@@ -13385,8 +13385,8 @@ function limpar()
 
             //window.ga.startTrackerWithId("UA-108232712-1", 10);
             if(device.platform.toLowerCase() === "android"){
-                StatusBar.overlaysWebView(true);
-                StatusBar.backgroundColorByHexString('#ff3055d9');
+                //StatusBar.overlaysWebView(true);
+                //StatusBar.backgroundColorByHexString('#ff3055d9');
             }
 
             function TrackButtonClicked() {
