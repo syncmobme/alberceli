@@ -10,7 +10,7 @@
 <allow-navigation href="*"/>
 <allow-intent href="*"/>
 
-<preference name="phonegap-version" value="cli-6.5.0" />
+<preference name="phonegap-version" value="cli-7.0.1" />
 
 <plugin name="cordova-plugin-device" spec="^1.1.2"/>
 <plugin name="cordova-plugin-network-information" spec="^1.2.1"/>
