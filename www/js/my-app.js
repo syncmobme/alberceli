@@ -13389,7 +13389,7 @@ function limpar()
 
             const push = PushNotification.init({
                 android: {
-                    icon: "icon-notification"
+                    icon: "iconnotification"
                 },
                 ios: {
                     gcmSandbox: "true", // false para producao true para desenvolvimento
