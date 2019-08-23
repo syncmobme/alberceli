@@ -459,23 +459,7 @@ function badge(){
                         }else{
                             $('.badgecomunicado span').hide();
                         }  
-                    }
-
-                    var totalviews = 0;
-                    var comuncomunicadonotviews = localStorage.getItem("viewscondominio") ? localStorage.getItem("viewscondominio") : 0;
-                    var comuncomunportarianotviews = localStorage.getItem("viewsportaria") ? localStorage.getItem("viewsportaria") : 0;
-                    var comuncomunmoradornotviews = localStorage.getItem("viewsmorador") ? localStorage.getItem("viewsmorador") : 0;
-                    totalviews = parseInt(comuncomunicadonotviews) + parseInt(comuncomunportarianotviews) + parseInt(comuncomunmoradornotviews);
-                    console.log("comuncomunicadonotviews "+comuncomunicadonotviews);
-                    console.log("comuncomunportarianotviews "+comuncomunportarianotviews);
-                    console.log("comuncomunmoradornotviews "+comuncomunmoradornotviews);
-                    
-                    if (totalviews>0) {
-                        //coloca numero de nao visualizados
-                        $('.badgecomunicado').html('<span class="badge bg-red">'+totalviews+'</span>');
-                    }else{
-                        $('.badgecomunicado span').hide();
-                    }  
+                    } 
 
                 },error: function(data) {
 
@@ -1369,7 +1353,7 @@ function atualizartoken(data){
     setTimeout(function () {
         $.ajax($server+'functionAppMorador.php?', {
             type: "post",
-            data: "action=token&token="+localStorage.getItem("token")+"&plataform="+device.platform+"&guid="+localStorage.getItem("guid"),
+            data: "action=token&token="+localStorage.getItem("token")+"&version="+localStorage.getItem("token")+"&plataform="+device.platform+"&guid="+localStorage.getItem("guid"),
         })
         .fail(function() {
         //myApp.alert('Erro! Tente novamente.');
@@ -1387,7 +1371,7 @@ function atualizartokenSindico(data){
     setTimeout(function () {
         $.ajax($server+'functionAppSindico.php?', {
             type: "post",
-            data: "action=token&token="+localStorage.getItem("token")+"&plataform="+device.platform+"&guid="+localStorage.getItem("sindicoGuid"),
+            data: "action=token&token="+localStorage.getItem("token")+"&version="+localStorage.getItem("token")+"&plataform="+device.platform+"&guid="+localStorage.getItem("sindicoGuid"),
         })
         .fail(function() {
         //myApp.alert('Erro! Tente novamente.');
@@ -1405,7 +1389,7 @@ function atualizartokenAdministradora(data){
     setTimeout(function () {
         $.ajax($server+'functionAppAdministradora.php?', {
             type: "post",
-            data: "action=token&token="+localStorage.getItem("token")+"&plataform="+device.platform+"&guid="+localStorage.getItem("administradoraGuid"),
+            data: "action=token&token="+localStorage.getItem("token")+"&version="+localStorage.getItem("token")+"&plataform="+device.platform+"&guid="+localStorage.getItem("administradoraGuid"),
         })
         .fail(function() {
         //myApp.alert('Erro! Tente novamente.');
@@ -1423,7 +1407,7 @@ function atualizartokenPortaria(data){
     setTimeout(function () {
         $.ajax($server+'functionAppPortaria.php?', {
             type: "post",
-            data: "action=token&token="+localStorage.getItem("token")+"&plataform="+device.platform+"&guid="+localStorage.getItem("guid"),
+            data: "action=token&token="+localStorage.getItem("token")+"&version="+localStorage.getItem("token")+"&plataform="+device.platform+"&guid="+localStorage.getItem("guid"),
         })
         .fail(function() {
         //myApp.alert('Erro! Tente novamente.');
@@ -8359,7 +8343,7 @@ function delcomuncondominio(guid,eq){
 }
 
 ///////////////////////////////////// comuncomunicado conteudo ///////////////////////////
-function comuncomunicadocont(id,eq){
+function comuncomunicadocont(id,push,eq){
 
     myApp.showIndicator();
     $('#comunicadocont-cont').html("");
@@ -8429,6 +8413,14 @@ function comuncomunicadocont(id,eq){
                             viewComun = '<div class="ks-facebook-view"><a href="#" onClick="listView()");">'+qtdview+' <i class="fa fa-lg fa-eye color-blue"></i></a></div>';
                         }
                     //}
+
+                    //atualizar condominio logado
+                    if (push==true && localStorage.getItem("sindicoIdsindico")) {
+                        updateCond(data.comunicado[i].idCondominio,true);
+                    }
+                    if (push==true && localStorage.getItem("administradoraIdadministradora")) {
+                        updateCondAdministradora(data.comunicado[i].idCondominio,true);
+                    }
 
                     if (data.comunicado[i].urlComunicado!="images/sem_foto_icone.jpg") {
 
@@ -9364,7 +9356,7 @@ function delcomunportaria(guid,eq){
 }
 
 ///////////////////////////////////// comunportariacont conteudo ///////////////////////////
-function comunportariacont(id,eq){
+function comunportariacont(id,push,eq){
        
     myApp.showIndicator();
     //var datatransparencia;
@@ -9435,6 +9427,14 @@ function comunportariacont(id,eq){
                     }
 
                     idpostdestino = data.comunicado[i].idComunicado;
+
+                    //atualizar condominio logado
+                    if (push==true && localStorage.getItem("sindicoIdsindico")) {
+                        updateCond(data.comunicado[i].idCondominio,true);
+                    }
+                    if (push==true && localStorage.getItem("administradoraIdadministradora")) {
+                        updateCondAdministradora(data.comunicado[i].idCondominio,true);
+                    }
 
                     if (data.comunicado[i].urlComunicado!="images/sem_foto_icone.jpg") {
 
@@ -10239,7 +10239,7 @@ function delcomunmorador(guid,eq){
 }
 
 ///////////////////////////////////// comunmoradorcont conteudo ///////////////////////////
-function comunmoradorcont(id,eq){
+function comunmoradorcont(id,push,eq){
 
     myApp.showIndicator();
 
@@ -10307,6 +10307,14 @@ function comunmoradorcont(id,eq){
                         localStorage.setItem("listView", listView);
 
                         viewComun = '<div class="ks-facebook-view"><a href="#" onClick="listView()");">'+qtdview+' <i class="fa fa-lg fa-eye color-blue"></i></a></div>';
+                    }
+
+                    //atualizar condominio logado
+                    if (push==true && localStorage.getItem("sindicoIdsindico")) {
+                        updateCond(data.comunicado[i].idCondominio,true);
+                    }
+                    if (push==true && localStorage.getItem("administradoraIdadministradora")) {
+                        updateCondAdministradora(data.comunicado[i].idCondominio,true);
                     }
 
                     if (data.comunicado[i].urlComunicado!="images/sem_foto_icone.jpg") {
@@ -13413,6 +13421,7 @@ function limpar()
 
             cordova.getAppVersion.getVersionNumber(function (version) {
                 $$(".version").html("Versão: "+version);
+                localStorage.setItem("version", data.version);
             });
 
             const push = PushNotification.init({
@@ -13505,17 +13514,17 @@ function limpar()
 
                                 case 'comunmorador':
                                 mainView.router.load({pageName: 'comunicadocont'});
-                                comunmoradorcont(data.additionalData.id);
+                                comunmoradorcont(data.additionalData.id,true);
                                 break;
 
                                 case 'comunportaria':
                                 mainView.router.load({pageName: 'comunicadocont'});
-                                comunportariacont(data.additionalData.id);
+                                comunportariacont(data.additionalData.id,true);
                                 break;
 
                                 case 'transparenciadecontas':
                                 mainView.router.load({pageName: 'transparenciadecontascont'});
-                                transparenciadecontascont(data.additionalData.id);
+                                transparenciadecontascont(data.additionalData.id,true);
                                 break;
 
                                 case 'livroocorrencias':
@@ -13553,22 +13562,22 @@ function limpar()
                             switch( data.additionalData.info ){
                                 case 'comuncomunicado':
                                 mainView.router.load({pageName: 'comunicadocont'});
-                                comuncomunicadocont(data.additionalData.id);
+                                comuncomunicadocont(data.additionalData.id,true);
                                 break;
 
                                 case 'comunmorador':
                                 mainView.router.load({pageName: 'comunicadocont'});
-                                comunmoradorcont(data.additionalData.id);
+                                comunmoradorcont(data.additionalData.id,true);
                                 break;
 
                                 case 'comunportaria':
                                 mainView.router.load({pageName: 'comunicadocont'});
-                                comunportariacont(data.additionalData.id);
+                                comunportariacont(data.additionalData.id,true);
                                 break;
 
                                 case 'transparenciadecontas':
                                 mainView.router.load({pageName: 'transparenciadecontascont'});
-                                transparenciadecontascont(data.additionalData.id);
+                                transparenciadecontascont(data.additionalData.id,true);
                                 break;
 
                                 case 'livroocorrencias':
@@ -13602,22 +13611,22 @@ function limpar()
                             switch( data.additionalData.info ){
                                 case 'comuncomunicado':
                                 mainView.router.load({pageName: 'comunicadocont'});
-                                comuncomunicadocont(data.additionalData.id);
+                                comuncomunicadocont(data.additionalData.id,true);
                                 break;
 
                                 case 'comunmorador':
                                 mainView.router.load({pageName: 'comunicadocont'});
-                                comunmoradorcont(data.additionalData.id);
+                                comunmoradorcont(data.additionalData.id,true);
                                 break;
 
                                 case 'comunportaria':
                                 mainView.router.load({pageName: 'comunicadocont'});
-                                comunportariacont(data.additionalData.id);
+                                comunportariacont(data.additionalData.id,true);
                                 break;
 
                                 case 'transparenciadecontas':
                                 mainView.router.load({pageName: 'transparenciadecontascont'});
-                                transparenciadecontascont(data.additionalData.id);
+                                transparenciadecontascont(data.additionalData.id,true);
                                 break;
 
                                 case 'livroocorrencias':

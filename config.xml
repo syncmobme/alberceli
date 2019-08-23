@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<widget xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:android="http://schemas.android.com/apk/res/android" android-versionCode="100" ios-CFBundleVersion="1.0.0" version="1.0.0" id="com.alberceli.android">
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:android="http://schemas.android.com/apk/res/android" android-versionCode="101" ios-CFBundleVersion="1.0.1" version="1.0.1" id="com.alberceli.android">
 
 <name>Alberceli Administradora</name>
 <description>Moradores e condomínios conectados</description>
@@ -10,7 +10,7 @@
 <allow-navigation href="*"/>
 <allow-intent href="*"/>
 
-<preference name="phonegap-version" value="cli-6.5.0" />
+<preference name="phonegap-version" value="cli-8.1.1" />
 
 <plugin name="cordova-plugin-device" spec="^1.1.2"/>
 <plugin name="cordova-plugin-network-information" spec="^1.2.1"/>
@@ -25,7 +25,7 @@
 <plugin name="cordova-plugin-splashscreen" spec="^3.2.2"/>
 
 <!-- 1.11.1 | alterar notificationTemplate framework7.js -->
-<plugin name="phonegap-plugin-push" spec="1.11.1">
+<plugin name="phonegap-plugin-push" spec="2.2.0">
     <variable name="SENDER_ID" value="582224740202"/>
 </plugin>
 
@@ -65,7 +65,7 @@
     <resource-file src="package-assets/iconnotification.png" target="res/drawable/iconnotification.png" />
     <!-- para celular usar 17 e tablet 16 (min. android 4.1) -->
     <!--<preference name="android-minSdkVersion" value="16"/>-->
-    <preference name="android-minSdkVersion" value="17"/>
+    <preference name="android-minSdkVersion" value="19"/>
     <preference name="android-targetSdkVersion" value="28"/>
     <preference name="android-installLocation" value="auto"/>
     <preference name="Fullscreen" value="false"/>
