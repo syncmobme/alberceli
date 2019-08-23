@@ -25,7 +25,7 @@
 <plugin name="cordova-plugin-splashscreen" spec="^3.2.2"/>
 
 <!-- 1.11.1 | alterar notificationTemplate framework7.js -->
-<plugin name="phonegap-plugin-push" spec="2.2.0">
+<plugin name="phonegap-plugin-push" spec="2.1.2">
     <variable name="SENDER_ID" value="582224740202"/>
 </plugin>
 
