@@ -22,7 +22,7 @@
 <plugin name="ionic-plugin-keyboard" spec="^2.2.1"/>
 <plugin name="cordova-plugin-dialogs" spec="^1.2.1"/>
 
-<plugin name="cordova-plugin-splashscreen" spec="^3.2.2"/>
+<plugin name="cordova-plugin-splashscreen" spec="3.2.2"/>
 
 <!-- 1.11.1 | alterar notificationTemplate framework7.js -->
 <plugin name="phonegap-plugin-push" spec="2.0.0">
@@ -52,7 +52,7 @@
 <edit-config file="platforms/android/app/src/main/AndroidManifest.xml" target="AndroidManifest.xml" />
 <edit-config file="AndroidManifest.xml" target="/manifest/application" mode="merge" />
 
-<preference name="StatusBarOverlaysWebView" value="true" />
+<!--<preference name="StatusBarOverlaysWebView" value="true" />-->
 <preference  name="AutoHideSplashScreen" value="true"/>
 <preference  name="SplashScreenDelay" value="3000"/>
 <preference  name="FadeSplashScreen" value="true"/>
