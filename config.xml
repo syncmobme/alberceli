@@ -25,7 +25,7 @@
 <plugin name="cordova-plugin-splashscreen" spec="3.2.2"/>
 
 <!-- 1.11.1 | alterar notificationTemplate framework7.js -->
-<plugin name="phonegap-plugin-push" spec="2.0.0">
+<plugin name="phonegap-plugin-push" spec="2.1.0">
     <variable name="FCM_VERSION" value="11.0.1" />
 </plugin>
 
@@ -69,7 +69,7 @@
     <resource-file src="package-assets/iconnotification.png" target="res/drawable/iconnotification.png" />
     <!-- para celular usar 17 e tablet 16 (min. android 4.1) -->
     <!--<preference name="android-minSdkVersion" value="16"/>-->
-    <preference name="android-minSdkVersion" value="19"/>
+    <preference name="android-minSdkVersion" value="20"/>
     <preference name="android-targetSdkVersion" value="28"/>
     <preference name="android-installLocation" value="auto"/>
     <preference name="Fullscreen" value="false"/>
