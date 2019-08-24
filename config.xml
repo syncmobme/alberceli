@@ -10,9 +10,9 @@
 <allow-navigation href="*"/>
 <allow-intent href="*"/>
 
-<preference name="phonegap-version" value="cli-8.0.0" />
+<preference name="phonegap-version" value="cli-7.0.0" />
 
-<!--<plugin name="cordova-plugin-device" spec="^1.1.2"/>-->
+<plugin name="cordova-plugin-device" spec="^1.1.2"/>
 <plugin name="cordova-plugin-network-information" spec="^1.2.1"/>
 <plugin name="cordova-plugin-inappbrowser" spec="^1.4.0"/>
 <plugin name="cordova-plugin-whitelist" spec="^1.2.2"/>
@@ -25,7 +25,7 @@
 <plugin name="cordova-plugin-splashscreen" spec="^3.2.2"/>
 
 <!-- 1.11.1 | alterar notificationTemplate framework7.js -->
-<plugin name="phonegap-plugin-push" spec="~2.1.2">
+<plugin name="phonegap-plugin-push" spec="2.0.0">
     <variable name="FCM_VERSION" value="11.0.1" />
 </plugin>
 
@@ -63,13 +63,14 @@
 <preference  name="UIWebViewBounce" value="false"/>
 <preference  name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,cache,cache-external,assets,root"/>
 <preference name="AndroidPersistentFileLocation" value="Compatibility" />
-<engine name="android" spec="~7.0.0" />
+
 <platform name="android">
     <resource-file src="google-services.json" target="app/google-services.json" />
     <resource-file src="package-assets/iconnotification.png" target="res/drawable/iconnotification.png" />
     <!-- para celular usar 17 e tablet 16 (min. android 4.1) -->
     <!--<preference name="android-minSdkVersion" value="16"/>-->
-
+    <preference name="android-minSdkVersion" value="19"/>
+    <preference name="android-targetSdkVersion" value="28"/>
     <preference name="android-installLocation" value="auto"/>
     <preference name="Fullscreen" value="false"/>
     <preference name="Orientation" value="default"/>
