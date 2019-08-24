@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<widget xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:android="http://schemas.android.com/apk/res/android" android-versionCode="102" ios-CFBundleVersion="1.0.2" version="1.0.2" id="com.alberceli.android">
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:android="http://schemas.android.com/apk/res/android" android-versionCode="103" ios-CFBundleVersion="1.0.3" version="1.0.3" id="com.alberceli.android">
 
 <name>Alberceli Administradora</name>
 <description>Moradores e condomínios conectados</description>
@@ -34,6 +34,8 @@
 <plugin name="cordova-plugin-media" spec="^2.3.0"/>
 <plugin name="cordova-plugin-android-permissions" spec="^1.0.0"/>
 
+<engine name="android" spec="6.3.0" />
+
 <plugin name="cordova-plugin-camera" spec="^2.4.1">
     <variable name="CAMERA_USAGE_DESCRIPTION" value="Usamos a câmera para tirar fotos nas aberturas de ocorrências" />
     <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="Usamos a galeria para envio de fotos nas aberturas de ocorrências" />
@@ -52,6 +54,10 @@
 <edit-config file="platforms/android/app/src/main/AndroidManifest.xml" target="AndroidManifest.xml" />
 <edit-config file="AndroidManifest.xml" target="/manifest/application" mode="merge" />
 
+<edit-config file="AndroidManifest.xml" target="/manifest/application/activity[@android:name='MainActivity']" mode="merge">
+   <activity android:theme="@style/Theme.DeviceDefault" />
+</edit-config>
+
 <!--<preference name="StatusBarOverlaysWebView" value="true" />-->
 <preference  name="AutoHideSplashScreen" value="true"/>
 <preference  name="SplashScreenDelay" value="3000"/>
@@ -69,7 +75,7 @@
     <resource-file src="package-assets/iconnotification.png" target="res/drawable/iconnotification.png" />
     <!-- para celular usar 17 e tablet 16 (min. android 4.1) -->
     <!--<preference name="android-minSdkVersion" value="16"/>-->
-    <preference name="android-minSdkVersion" value="20"/>
+    <preference name="android-minSdkVersion" value="17"/>
     <preference name="android-targetSdkVersion" value="28"/>
     <preference name="android-installLocation" value="auto"/>
     <preference name="Fullscreen" value="false"/>
