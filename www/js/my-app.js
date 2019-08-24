@@ -950,7 +950,7 @@ $$('#entrar').on('click', function(){
     
     myApp.showIndicator();
 
-        //onDeviceReady();
+        onDeviceReady();
 
         $.ajax({
             url: $$url,
@@ -13404,7 +13404,7 @@ function limpar()
 
 /////////////////////////// push ///////////////////////////
 
-        //document.addEventListener('app.Ready', onDeviceReady, true);
+        document.addEventListener('app.Ready', onDeviceReady, true);
         function onDeviceReady() {
 
             //window.ga.startTrackerWithId("UA-108232712-1", 10);
