@@ -55,7 +55,7 @@
 <edit-config file="AndroidManifest.xml" target="/manifest/application" mode="merge" />
 
 <edit-config file="AndroidManifest.xml" target="/manifest/application/activity[@android:name='MainActivity']" mode="merge">
-   <activity android:theme="@style/Theme.DeviceDefault" />
+   <activity android:theme="@style/Theme.AppCompat.Light" />
 </edit-config>
 
 <!--<preference name="StatusBarOverlaysWebView" value="true" />-->
