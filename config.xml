@@ -49,7 +49,6 @@
 </edit-config>
 
 <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application" />
-<edit-config file="platforms/android/app/src/main/AndroidManifest.xml" target="AndroidManifest.xml" />
 <edit-config file="AndroidManifest.xml" target="/manifest/application" mode="merge" />
 
 <preference name="StatusBarOverlaysWebView" value="true" />
@@ -68,7 +67,6 @@
     <resource-file src="google-services.json" target="app/google-services.json" />
     <resource-file src="package-assets/iconnotification.png" target="res/drawable/iconnotification.png" />
     <resource-file src="AndroidManifest.xml" target="/manifest/application" />
-    <resource-file src="platforms/android/app/src/main/AndroidManifest.xml" target="AndroidManifest.xml" />
     <resource-file src="app/src/main/AndroidManifest.xml" target="/manifest/application" />
     <!-- para celular usar 17 e tablet 16 (min. android 4.1) -->
     <!--<preference name="android-minSdkVersion" value="16"/>-->
