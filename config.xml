@@ -65,7 +65,7 @@
 <preference name="AndroidPersistentFileLocation" value="Compatibility" />
 
 <platform name="android">
-    <resource-file src="google-services.json" target="app/google-services.json" />
+    <resource-file src="google-services.json" target="google-services.json" />
     <resource-file src="package-assets/iconnotification.png" target="res/drawable/iconnotification.png" />
     <!-- para celular usar 17 e tablet 16 (min. android 4.1) -->
     <!--<preference name="android-minSdkVersion" value="16"/>-->
