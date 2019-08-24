@@ -63,14 +63,13 @@
 <preference  name="UIWebViewBounce" value="false"/>
 <preference  name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,cache,cache-external,assets,root"/>
 <preference name="AndroidPersistentFileLocation" value="Compatibility" />
-
+<engine name="android" spec="~7.0.0" />
 <platform name="android">
     <resource-file src="google-services.json" target="app/google-services.json" />
     <resource-file src="package-assets/iconnotification.png" target="res/drawable/iconnotification.png" />
     <!-- para celular usar 17 e tablet 16 (min. android 4.1) -->
     <!--<preference name="android-minSdkVersion" value="16"/>-->
-    <preference name="android-minSdkVersion" value="19"/>
-    <preference name="android-targetSdkVersion" value="28"/>
+
     <preference name="android-installLocation" value="auto"/>
     <preference name="Fullscreen" value="false"/>
     <preference name="Orientation" value="default"/>
