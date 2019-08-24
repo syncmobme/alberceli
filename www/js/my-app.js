@@ -1353,7 +1353,7 @@ function atualizartoken(data){
     setTimeout(function () {
         $.ajax($server+'functionAppMorador.php?', {
             type: "post",
-            data: "action=token&token="+localStorage.getItem("token")+"&version="+localStorage.getItem("token")+"&plataform="+device.platform+"&guid="+localStorage.getItem("guid"),
+            data: "action=token&token="+localStorage.getItem("token")+"&version="+localStorage.getItem("version")+"&plataform="+device.platform+"&guid="+localStorage.getItem("guid"),
         })
         .fail(function() {
         //myApp.alert('Erro! Tente novamente.');
@@ -1371,7 +1371,7 @@ function atualizartokenSindico(data){
     setTimeout(function () {
         $.ajax($server+'functionAppSindico.php?', {
             type: "post",
-            data: "action=token&token="+localStorage.getItem("token")+"&version="+localStorage.getItem("token")+"&plataform="+device.platform+"&guid="+localStorage.getItem("sindicoGuid"),
+            data: "action=token&token="+localStorage.getItem("token")+"&version="+localStorage.getItem("version")+"&plataform="+device.platform+"&guid="+localStorage.getItem("sindicoGuid"),
         })
         .fail(function() {
         //myApp.alert('Erro! Tente novamente.');
@@ -1389,7 +1389,7 @@ function atualizartokenAdministradora(data){
     setTimeout(function () {
         $.ajax($server+'functionAppAdministradora.php?', {
             type: "post",
-            data: "action=token&token="+localStorage.getItem("token")+"&version="+localStorage.getItem("token")+"&plataform="+device.platform+"&guid="+localStorage.getItem("administradoraGuid"),
+            data: "action=token&token="+localStorage.getItem("token")+"&version="+localStorage.getItem("version")+"&plataform="+device.platform+"&guid="+localStorage.getItem("administradoraGuid"),
         })
         .fail(function() {
         //myApp.alert('Erro! Tente novamente.');
@@ -1407,7 +1407,7 @@ function atualizartokenPortaria(data){
     setTimeout(function () {
         $.ajax($server+'functionAppPortaria.php?', {
             type: "post",
-            data: "action=token&token="+localStorage.getItem("token")+"&version="+localStorage.getItem("token")+"&plataform="+device.platform+"&guid="+localStorage.getItem("guid"),
+            data: "action=token&token="+localStorage.getItem("token")+"&version="+localStorage.getItem("version")+"&plataform="+device.platform+"&guid="+localStorage.getItem("guid"),
         })
         .fail(function() {
         //myApp.alert('Erro! Tente novamente.');
@@ -13421,7 +13421,7 @@ function limpar()
 
             cordova.getAppVersion.getVersionNumber(function (version) {
                 $$(".version").html("Versão: "+version);
-                localStorage.setItem("version", data.version);
+                localStorage.setItem("version", version);
             });
 
             const push = PushNotification.init({
