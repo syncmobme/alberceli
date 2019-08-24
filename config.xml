@@ -50,7 +50,7 @@
 
 <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application" />
 <edit-config file="platforms/android/app/src/main/AndroidManifest.xml" target="AndroidManifest.xml" />
-<edit-config file="AndroidManifest.xml" target="/manifest/application" mode="merge">
+<edit-config file="AndroidManifest.xml" target="/manifest/application" mode="merge" />
 
 <preference name="StatusBarOverlaysWebView" value="true" />
 <preference  name="AutoHideSplashScreen" value="true"/>
