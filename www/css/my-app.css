@@ -161,7 +161,7 @@ float: left;
 #searchportariahome-cont{
 	margin-bottom: 50px;
 }
-.selecionarespaco{
+.selecionarespaco, .selecionarcatanuncio{
 	top: 0!important;
 }
 .picker-modal-inner{
@@ -1147,9 +1147,18 @@ transform: translate(-50%,-50%);
 	color: #8e8e93;
 	text-align: justify;
 }
+.viewpassword{
+	width: 40px;
+    margin-top: 10px;
+    position: absolute;
+    right: 0;
+    cursor: pointer;
+}
+.viewpassword i{
+	font-size: 20px;
+	color: gray;
+}
 .ks-facebook-avatar img {
-	//min-width: 34px;
-	//min-height: 34px;
     transform: translate(-50%,-50%);
     min-width: 54px;
     max-height: 54px;
@@ -1267,7 +1276,16 @@ transform: translate(-50%,-50%);
 .notifications .item-title {
 	padding: 0!important;
 }
+
+
 /* agendamento */
+.actionOptionAgendamento .item-content{
+	height: 70px;
+}
+.actionOptionAgendamento .item-content .item-title{
+	font-weight: 500;
+}
+
 .label-agendamento {
     min-height: 20px!important;
     font-size: 11px;
@@ -1326,15 +1344,15 @@ input[type="date"]:not(.has-value):before, input[type="datetime-local"]:not(.has
 	margin-bottom: -7px!important;
 	height: 265px;
 }
-.banner-full{
+.banner-full, .banner-full-tap{
 	width: 100%;
 	height: 100%;
 }
-.banner-full a{
+.banner-full a, .banner-full-tap a{
 	width: 100%;
 	display: block;
 }
-.banner-full a img{
+.banner-full a img, .banner-full-tap a img{
 	width: 100%;
 }
 .img-banner a {
