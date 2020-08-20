@@ -52,7 +52,7 @@ function execmascara(){
 function mplaca(v){
     v=v.replace(/([a-zA-Z]{3})(\d{1,2})$/,"$1-$2") //Coloca um hífen entre o terceiro e o quarto dígitos
     //v=v.replace(/(\d{4})(\d)/,"$1-$2")
-    return v
+    return v.toUpperCase()
 }
 //window.screen.lockOrientation('portrait');
 //intel.xdk.device.setRotateOrientation("portrait");
@@ -60,14 +60,21 @@ function mplaca(v){
 ///////////////////////// iniciar dom /////////////////////////
 var $$ = Dom7;
 
-var $server = 'https://aptohome.com.br/admin/';
-//var $apiKey = '';
+
+var $nameapp = 'Alberceli';
+var $server = 'https://apptohome.com.br/admin/';
 var $apiKey = 'AIzaSyAodMPp-xMzDyRL0bLr_THYzMqe5K5_YH0';
+
 var imagemPerf;
 var tabindex = 1;
 var bannerview = 0;
 var atualizamaptime;
 var alertadechegadahometime;
+var $$idcondominioteste = "87";
+var $$idblocoteste = "2239";
+var $$iddomicilioteste = "11240";
+var $$senderID = "582224740202";
+var $$testelocal = true;
 
 logado();
 
@@ -143,7 +150,7 @@ function onOffline() {
     /*myApp.addNotification({
         title: "Conexão falhou!",
         //subtitle: e.payload.subtitle,
-        message: 'Você precisa de conexão com a internet para acessar o Aptohome',
+        message: 'Você precisa de conexão com a internet para acessar o Apptohome',
         media: '<img src='+e.payload.media+'>',
     });*/
     myApp.alert('Você precisa de conexão com a internet');
@@ -153,6 +160,58 @@ function onOnline() {
 }
 
 document.addEventListener("online", onOnline, false);
+
+//////////////////////////////// visualizar password //////////////////////
+$$('.viewpassword').on('click', function (e) {
+    if ($("#password").attr("type")=="password") {
+        $("#password").attr("type","text");
+        $(".viewpassword i").removeClass("fa-eye-slash");
+        $(".viewpassword i").addClass("fa-eye");
+    }else{
+        $("#password").attr("type","password");
+        $(".viewpassword i").removeClass("fa-eye");
+        $(".viewpassword i").addClass("fa-eye-slash");
+    }
+});
+
+//////////////////////////////// GetNinjas ////////////////////////////////
+function getninjas(){
+    myApp.showIndicator();
+    
+    /*var inAppBrowserRef;
+    var target = "_blank";
+    var options = "zoom=no,location=yes,toolbarcolor=#3f51b5,closebuttoncolor=#ffffff,navigationbuttoncolor=#ffffff,hideurlbar=yes";
+    
+    inAppBrowserRef = cordova.InAppBrowser.open("https://parcerias.getninjas.com.br/v1/?utm_source=apptohome&utm_medium=app&utm_campaign=services", target, options);
+    inAppBrowserRef.addEventListener('loadstop', loadStopCallBack);
+    function loadStopCallBack(){
+        myApp.hideIndicator();
+    }*/
+
+    $(".iframe-boleto").attr("src","https://parcerias.getninjas.com.br/v1/?utm_source=apptohome&utm_medium=app&utm_campaign=services");
+    $('.iframe-boleto').on("load", function() {
+        myApp.hideIndicator();
+    });
+
+}
+
+//////////////////////////////// inserir click no banner ////////////////////////////////
+function clickbanner(id){
+    $.ajax($server+'functionAppBanner.php?', {
+        type: "post",
+        data: "idbanner="+id+"&idmorador="+localStorage.getItem("moradorIdmorador")+"&idsindico="+localStorage.getItem("sindicoIdsindico")+"&idportaria="+localStorage.getItem("portariaIdportaria")+"&idadministradora="+localStorage.getItem("administradoraIdadministradora")+"&action=click",
+    })
+      .fail(function() {
+
+      })     
+      .done(function(data) {
+        if (data!="ok") {
+            console.log('Erro click banner');
+        } else {
+            console.log('click banner ok');
+        }
+      });
+}
 
 myApp.onPageReinit('index', function (page) {
         
@@ -183,6 +242,7 @@ myApp.onPageReinit('index', function (page) {
     }
 });
 
+//// listar badge ///////
 function badge(){
 
     // Loading flag
@@ -211,6 +271,16 @@ function badge(){
             iddomicilio = "";
             idbloco = "";
             iddestino = "";
+        } else{
+            var idsindico = "";
+        }
+
+        if (localStorage.getItem("sindicoIdsindico") && !localStorage.getItem("moradorIdmorador")) {
+            var idsindico = localStorage.getItem("sindicoIdsindico");
+            iddomicilio = "";
+            idbloco = "";
+            iddestino = "";
+            idmorador = "";
         } else{
             var idsindico = "";
         }
@@ -379,7 +449,7 @@ function badge(){
                                     dataType : "json",
                                     async: true,
                                     success: function(data) {
-                                        console.log(data);
+                                        //console.log(data);
                                         if (data!=null) {
                                             myApp.hideIndicator();
                                             var datacomunicado = "";
@@ -574,6 +644,10 @@ function badge(){
             idmorador = localStorage.getItem("moradorIdmorador");
             idsindico = localStorage.getItem("sindicoIdsindico");
             idadministradora = "";
+        } else if (localStorage.getItem("sindicoIdsindico") && !localStorage.getItem("moradorIdmorador")) {
+            idmorador = "";
+            idsindico = localStorage.getItem("sindicoIdsindico");
+            idadministradora = "";
         } else if (localStorage.getItem("administradoraIdadministradora") && localStorage.getItem("moradorIdmorador")) {
             idmorador = "";
             idsindico = "";
@@ -620,6 +694,42 @@ function badge(){
 
             }
         });
+
+        var viewsassembleias = 0;
+        $.ajax({
+
+            url: $server+"functionAppAssembleia.php?idcondominio="+idcondominio+"&idmorador="+idmorador+"&idsindico="+idsindico+"&idadministradora="+idadministradora+"&action=list",
+            dataType : "json",
+            success: function(data) {
+                //console.log(data);
+                if (data!=null) {
+                    myApp.hideIndicator();
+                    var dataassembleia = "";
+                    var delassembleia = "";
+                    var swipeout = "";
+                    var invisivel = "invisivel";
+                    var qtd = data.assembleia.length;
+                    var view = "";
+                    var textbold = "";
+
+                    for (var i = 0; i < qtd; i++) {
+                        // soma ocorrencias nao lidas
+                        if (data.assembleia[i].view==0) {
+                            viewsassembleias++
+                        }
+                    }
+
+                    if (viewsassembleias>0) {
+                        $('.badgeassembleia').html('<span class="badge bg-red">'+viewsassembleias+'</span>');
+                    }else{
+                        $('.badgeassembleia span').hide();
+                    }
+                }          
+            },error: function(data) {
+
+            }
+        });
+
     }
 
 }
@@ -904,7 +1014,7 @@ function videos(){
                                     '</a>'+
                                     '<div class="card-header">'+
                                         '<div class="ks-facebook-avatar"><img src="https://yt3.ggpht.com/-jxyjMXngpPE/AAAAAAAAAAI/AAAAAAAAAAA/9BdjsAA14uw/s50-c-k-no-mo-rj-c0xffffff/photo.jpg" width="34"></div>'+
-                                            '<div class="ks-facebook-name">Aptohome</div>'+
+                                            '<div class="ks-facebook-name">'+$nameapp+'</div>'+
                                             '<div class="ks-facebook-date">'+item.snippet.title+'</div>'+
                                             //'<div class="ks-facebook-date">'+moment(item.snippet.publishedAt).locale('pt-br').format('llll')+'</div>'+
                                             //'<div class="color-indigo" onClick="shareVideoCont(\''+datayoutube+'\');"><i class="icon shareVideoCont fa fa-share-alt fa-lg"></i></div>'+
@@ -950,7 +1060,10 @@ $$('#entrar').on('click', function(){
     
     myApp.showIndicator();
 
-        onDeviceReady();
+        // habilita teste local
+        if ($$testelocal==false) {
+            onDeviceReady();
+        }
 
         $.ajax({
             url: $$url,
@@ -998,7 +1111,7 @@ $$('#entrar').on('click', function(){
                             }
                         }else{
                             myApp.hideIndicator();
-                            myApp.alert('Condomínio bloqueado! Favor entrar em contato com o Aptohome.');
+                            myApp.alert('Condomínio bloqueado! Favor entrar em contato com o Suporte.');
                             block=1;
                         }
                     });
@@ -1128,7 +1241,7 @@ $$('#entrar').on('click', function(){
                             }
                         }else{
                             myApp.hideIndicator();
-                            myApp.alert('Condomínio bloqueado! Favor entrar em contato com o Aptohome.'); 
+                            myApp.alert('Condomínio bloqueado! Favor entrar em contato com o Suporte.'); 
                         }
                     });
                 } else if (data.login.sindico) {
@@ -1322,7 +1435,7 @@ $$('#entrar').on('click', function(){
                             }
                         }else{
                             myApp.hideIndicator();
-                            myApp.alert('Condomínio bloqueado! Favor entrar em contato com o Aptohome.');    
+                            myApp.alert('Condomínio bloqueado! Favor entrar em contato com o Suporte.');    
                         }
                     });
                 } else {
@@ -1842,6 +1955,7 @@ function modulos(){
             $$('.menucronograma').addClass('invisivel');
             $$('.menuboletos').addClass('invisivel');
             $$('.menuenquetes').addClass('invisivel');
+            $$('.menuassembleia').addClass('invisivel');
             //alert("portaria");
         }
 
@@ -1965,6 +2079,16 @@ function modulos(){
                                 }
                                 auxalerta = 1;
                             break;
+                            // case 21 = visualizacao de ocorrencias (todos ou so quem criou)
+                            case '22':
+                                $$(".menutaps").addClass("invisivel");
+                            break;
+                            case '23':
+                                $$(".menugetninjas").addClass("invisivel");
+                            break;
+                            case '24':
+                                $$(".menuassembleia").addClass("invisivel");
+                            break;
                         }
                     }
                     // se nao for desabilitado (case 15) mostra o popup
@@ -2003,20 +2127,20 @@ function profile(){
     var bloco_num = "";
     var labelbloco = "";
     var labelapto = "";
-    
-    //verifica se labels tem valor
-    if (localStorage.getItem("labelbloco")) {
-        labelbloco = localStorage.getItem("labelbloco");
-    }else{
-        labelbloco = "Bloco";
-    }
-    if (localStorage.getItem("labelapto")) {
-        labelapto = localStorage.getItem("labelapto");
-    }else{
-        labelapto = "Apto";
-    }
 
     setTimeout(function () {    
+        //verifica se labels tem valor
+        if (localStorage.getItem("labelbloco")) {
+            labelbloco = localStorage.getItem("labelbloco");
+        }else{
+            labelbloco = "Bloco";
+        }
+        if (localStorage.getItem("labelapto")) {
+            labelapto = localStorage.getItem("labelapto");
+        }else{
+            labelapto = "Apto";
+        }
+
         if(localStorage.getItem("blocoNum") && localStorage.getItem("blocoNum").toUpperCase()!="SEM BLOCO"){
             bloco_num = labelbloco+": " + localStorage.getItem("blocoNum") + " | ";
         }
@@ -2777,12 +2901,10 @@ function cameraProfile() {
 // Take picture using device camera and retrieve image as base64-encoded string
     navigator.camera.getPicture(onSuccessProfile, onFailProfile, {
     quality: 80,
-    allowEdit : true,
     targetWidth: 1500,
     correctOrientation: true,
     targetHeight: 1000,
-    destinationType: Camera.DestinationType.DATA_URL,
-    saveToPhotoAlbum: true
+    destinationType: Camera.DestinationType.DATA_URL
     });
 }
 
@@ -2791,7 +2913,6 @@ function cameraFileProfile(source) {
 // Retrieve image file location from specified source
     navigator.camera.getPicture(onSuccessProfile, onFailProfile, {
     quality: 80,
-    allowEdit : true,
     targetWidth: 1500,
     correctOrientation: true,
     targetHeight: 1000,
@@ -2931,7 +3052,7 @@ function enviarprofile()
         });
         $("#preview-profile").attr('src',"");
  
-        indexofImage = imagemPerf.indexOf("aptohome");
+        indexofImage = imagemPerf.indexOf("apptohome");
 
 if (indexofImage!="-1") {
 }
@@ -2967,7 +3088,7 @@ if (indexofImage!="-1") {
                 }
                 
                 myApp.hideIndicator();
-                myApp.alert('Usuário editado om sucesso!', function () { mainView.router.load({pageName: 'index'});});
+                myApp.alert('Usuário editado com sucesso!', function () { mainView.router.load({pageName: 'index'});});
             });
         }
          ,error:function(data){
@@ -3442,7 +3563,66 @@ ptrContent.on('refresh', function (e) {
 });
 
 /////////////////////////////////////  mural de anuncios ///////////////////////
-function muraldeanuncios(){
+function muraldeanuncios(idCatAnuncio){
+if (!idCatAnuncio) {
+    idCatAnuncio = "";
+}
+// filtro listar categorias anuncio //
+
+    $.ajax({
+        url: $server+"functionAppAnuncios.php?action=listCat",
+        dataType : "json",
+        success: function(data) {
+            //console.log("entrei-success");
+            $('#txtlistcatanuncio').html("");
+            if (data!=null) {
+                myApp.hideIndicator();
+                var qtd = data.catanuncio.length;
+                var catlist = "";
+
+                    var catlist = '<div class="page" data-page="listcatanuncio">'+
+                                    '<div class="navbar">'+
+                                        '<div class="navbar-inner">'+
+                                            '<div class="left"><a href="#" class="open-panel link icon-only"><i class="icon icon-bars"></i></a></div>'+
+                                            '<div class="center">SELECIONE UMA CATEGORIA</div>'+
+                                            '<div class="right"><a href="#" class="back link icon-only"><i class="icon icon-back"></i></a></div>'+
+                                            '<div class="right no-margin"><a href="#index" class="link icon-only"><i class="icon fa fa-home"></i></a></div>'+
+                                        '</div>'+
+                                    '</div>'+
+                                      '<div class="page-content">'+
+                                        '<div class="list-block">'+
+                                          '<ul>';
+                        catlist += '<li><a href="#" onClick="muraldeanuncios(), $(\'.selecionarcatanuncio\').html(\'Todas\'),mainView.router.back();" class="item-link list-button"><div class="item-inner">Todas</div></li>';
+                    for (var i = 0; i < qtd; i++) {
+
+                        catlist += '<li><a href="#" onClick="muraldeanuncios(\''+data.catanuncio[i].idCatAnuncio+'\'), $(\'.selecionarcatanuncio\').html(\''+data.catanuncio[i].nomeCatAnuncio+'\'),mainView.router.back();" class="item-link list-button"><div class="item-inner">'+data.catanuncio[i].nomeCatAnuncio+'</div></li>';
+
+                    }
+                        catlist +='</ul>'+
+                                    '</div>'+
+                                  '</div>'+
+                                '</div>';
+
+                    localStorage.setItem("arrCatAnuncio", catlist);
+                    // verifica se tem categroia selecionada, senão coloca todas
+                    if ($('.selecionarcatanuncio').html()=="") {
+                        $('.selecionarcatanuncio').html("Todas");
+                    }
+            }
+
+        },error: function(data) {
+            myApp.hideIndicator();
+            myApp.alert('Erro ao carregar dados, tente novamente!');
+            $('#txtlistcatanuncio').html("");
+
+        }
+    });
+
+    // acao click para listar categorias
+    $$('.actionOptionCatAnun').on('click', function (e) {
+        mainView.router.loadContent(localStorage.getItem("arrCatAnuncio"));
+    });  
+
 
     myApp.showIndicator();
     //$('#muraldeanuncios-cont').html("");
@@ -3466,7 +3646,7 @@ function muraldeanuncios(){
         }
 
         $.ajax({
-            url: $server+"functionAppAnuncios.php?idcondominio="+localStorage.getItem("condominioId")+"&action=list",
+            url: $server+"functionAppAnuncios.php?idcondominio="+localStorage.getItem("condominioId")+"&idcatanuncio="+idCatAnuncio+"&action=listAnuncioCat",
             dataType : "json",
             success: function(data) {
                 //console.log(data);
@@ -3638,11 +3818,9 @@ function cameraAnuncios() {
 // Take picture using device camera and retrieve image as base64-encoded string
     navigator.camera.getPicture(onSuccessAnuncios, onFailAnuncios, {
     quality: 80,
-    allowEdit : true,
     targetWidth: 1500,
     correctOrientation: true,
-    destinationType: Camera.DestinationType.DATA_URL,
-    saveToPhotoAlbum: true
+    destinationType: Camera.DestinationType.DATA_URL
     });
 }
 
@@ -3651,7 +3829,6 @@ function cameraFileAnuncios(source) {
 // Retrieve image file location from specified source
     navigator.camera.getPicture(onSuccessAnuncios, onFailAnuncios, {
     quality: 80,
-    allowEdit : true,
     targetWidth: 1500,
     correctOrientation: true,
     destinationType: Camera.DestinationType.DATA_URL,
@@ -3715,7 +3892,7 @@ myApp.onPageInit('inserirmuraldeanuncios', function (page) {
     });
     
 });
-///////////////////////////// listar categorias anuncio //////////////////////////////////
+///////////////////////////// listar categorias inserir anuncio //////////////////////////////////
 function listCatAnuncio(){
     myApp.showIndicator();
 
@@ -3751,7 +3928,7 @@ function listCatAnuncio(){
 
 $('#butinseriranuncios').on('click', function(){
     //alert($$('#txttitanuncio').val()+" - "+$$('#txtanuncio').val()+" - "+$$('#txtvaloranuncio').val());
-    if (($$('#txttitanuncio').val()!="") && ($$('#txtanuncio').val()!="") && ($$('#txtphonenumber').val()!="") && ($$('#txtvaloranuncio').val()!="")) {
+    if (($$('#txtcatanuncio').val()!="") && ($$('#txttitanuncio').val()!="") && ($$('#txtanuncio').val()!="") && ($$('#txtphonenumber').val()!="") && ($$('#txtvaloranuncio').val()!="")) {
 
             enviaranuncios();
 
@@ -3898,6 +4075,10 @@ function livroocorrencias(){
         idmorador = localStorage.getItem("moradorIdmorador");
         idsindico = localStorage.getItem("sindicoIdsindico");
         idadministradora = "";
+    } else if (localStorage.getItem("sindicoIdsindico") && !localStorage.getItem("moradorIdmorador")) {
+        idmorador = "";
+        idsindico = localStorage.getItem("sindicoIdsindico");
+        idadministradora = "";
     } else if (localStorage.getItem("administradoraIdadministradora") && localStorage.getItem("moradorIdmorador")) {
         idmorador = "";
         idsindico = "";
@@ -4032,6 +4213,10 @@ function livroocorrenciascont(id,push,eq){
             idmorador = "";
             idsindico = "";
             idadministradora = localStorage.getItem("administradoraIdadministradora");
+        } else if (localStorage.getItem("sindicoIdsindico")){
+            idmorador = "";
+            idsindico = localStorage.getItem("sindicoIdsindico");
+            idadministradora = "";
         }
 
         $.ajax({
@@ -4148,6 +4333,18 @@ function livroocorrenciascont(id,push,eq){
                                         '</li>';
                         imgTransparencia = "";
                     $('#ocorrenciascont-cont').html(dataocorrencia);
+
+                    //marcar comunicado como lido
+                    $('#ocorrencias-cont li[data-index='+eq+'] a .item-inner').removeClass("textbold");
+                        
+                    if (data.ocorrencia[i].moradorview==true || data.ocorrencia[i].portariaview==true || data.ocorrencia[i].sindicoview==true || data.ocorrencia[i].adminview==true) {
+                        console.log("subtratir badges ocorrencias condominio");
+                        //subtrair badges
+                        if ($(".badgeocorrencia span").html()!="") {
+                            //subtrair badge icon
+                            $(".badgeocorrencia span").html(parseInt($(".badgeocorrencia span").text())-1);
+                        }
+                    }  
                     
                     /*if (data.ocorrencia[i].urlOcorrencia!="images/sem_foto_icone.jpg") {
                         var imgOcorrencia = '<div class="card-content-cont"><i '+imgZoom+' class="fa fa-search-plus fa-3x"></i><img src="'+data.ocorrencia[i].urlOcorrencia+'" '+imgZoom+' width="100%"></div>';
@@ -4174,7 +4371,7 @@ function livroocorrenciascont(id,push,eq){
                 var qtd = data.resposta.length;
                 var imgResposta = "";
                 var imgZoom;
-                var imgTitle = "Aptohome";
+                var imgTitle = $nameapp;
                 var dataresp = "";
 
                 for (var i = 0; i < qtd; i++) {
@@ -4261,15 +4458,6 @@ function livroocorrenciascont(id,push,eq){
             
             $('.resp-ocorrencias-cont').html(dataresp);
 
-            //marcar comunicado como lido
-            $('#ocorrencias-cont li[data-index='+eq+'] a .item-inner').removeClass("textbold");
-            //subtrair badges
-            if ($(".badgecomunicado span").html()!="") {
-                //subtrair badge icon
-                $(".badgeocorrencia span").html(parseInt($(".badgeocorrencia span").text())-1);
-            }  
-
-
 }
 
 function inserirocorrencias(){
@@ -4317,11 +4505,9 @@ function cameraOcorrencia() {
 // Take picture using device camera and retrieve image as base64-encoded string
     navigator.camera.getPicture(onSuccessOcorrencias, onFailOcorrencias, {
     quality: 80,
-    allowEdit : true,
     targetWidth: 1500,
     correctOrientation: true,
-    destinationType: Camera.DestinationType.DATA_URL,
-    saveToPhotoAlbum: true
+    destinationType: Camera.DestinationType.DATA_URL
     });
 }
 
@@ -4330,7 +4516,6 @@ function cameraFileOcorrencia(source) {
 // Retrieve image file location from specified source
     navigator.camera.getPicture(onSuccessOcorrencias, onFailOcorrencias, {
     quality: 80,
-    allowEdit : true,
     targetWidth: 1500,
     correctOrientation: true,
     destinationType: Camera.DestinationType.DATA_URL,
@@ -4434,6 +4619,7 @@ $$('#pdfFileOcorrencias').on('change', function (e) {
         }
     }else{
         myApp.alert('Formato inválido! Escolha um arquivo no formato PDF.');
+        myApp.hideIndicator();
     }
 
 });
@@ -4768,11 +4954,9 @@ function cameraTransparencia() {
 // Take picture using device camera and retrieve image as base64-encoded string
     navigator.camera.getPicture(onSuccessTransparencia, onFailTransparencia, {
     quality: 80,
-    allowEdit : true,
     targetWidth: 1500,
     correctOrientation: true,
-    destinationType: Camera.DestinationType.DATA_URL,
-    saveToPhotoAlbum: true
+    destinationType: Camera.DestinationType.DATA_URL
     });
 }
 
@@ -4781,7 +4965,6 @@ function cameraFileTransparencia(source) {
 // Retrieve image file location from specified source
     navigator.camera.getPicture(onSuccessTransparencia, onFailTransparencia, {
     quality: 50,
-    allowEdit: true,
     targetWidth: 1000,
     destinationType: Camera.DestinationType.DATA_URL,
     sourceType: Camera.PictureSourceType.PHOTOLIBRARY
@@ -4919,7 +5102,7 @@ function enviartransparencia()
             // Salvando imagem no servidor
             $.ajax($server+'functionAppTransparencia.php?', {
                 type: "post",
-                data: "imagem="+imagem+"&idsindico="+$$idsindico+"&idcondominio="+$$idcondominio+"&idadministradora="+$$idadministradora+"&txtTitulo="+$$txtTitulo+"&txtDescricao="+$$txtDescricao+"&apiKey="+$apiKey+"&action=add",
+                data: "imagem="+imagem+"&idsindico="+$$idsindico+"&idcondominio="+$$idcondominio+"&idadministradora="+$$idadministradora+"&txtIdTipo="+$$txtIdTipo+"&txtTitulo="+$$txtTitulo+"&txtDescricao="+$$txtDescricao+"&apiKey="+$apiKey+"&action=add",
             })
               .fail(function() {
                 myApp.hideIndicator();
@@ -4937,7 +5120,7 @@ function enviartransparencia()
                     });
                     $('input[type=hidden]').val("");
 
-                    myApp.alert('Transparência inserida com sucesso!', function () { mainView.router.load({pageName: 'transparenciadecontastipo'}); transparenciadecontastipo();});
+                    myApp.alert('Documento inserido com sucesso!', function () { mainView.router.load({pageName: 'transparenciadecontastipo'}); transparenciadecontastipo();});
                 }
               });
         }else{
@@ -4973,6 +5156,695 @@ function enviartransparencia()
         }
 }
 
+// Pull to refresh content
+var ptrContent = $$('.assembleia');
+ 
+// Add 'refresh' listener on it
+ptrContent.on('refresh', function (e) {
+
+        assembleia();
+        // When loading done, we need to reset it
+        myApp.pullToRefreshDone();
+});
+
+///////////////////////////////////// assembleia ///////////////////////////
+function assembleia(){
+
+    myApp.showIndicator();
+    //var datatransparencia;
+    //$('#servico-cont').html("");
+
+
+        // inserir badge de não lidos assembleia
+
+        if (localStorage.getItem("moradorIdmorador")) {
+            var idmorador = localStorage.getItem("moradorIdmorador");
+        } else{
+            var idmorador = "";
+        }
+
+        if (localStorage.getItem("sindicoIdsindico")) {
+            var idsindico = localStorage.getItem("sindicoIdsindico");
+        } else{
+            var idsindico = "";
+        }
+
+        if (localStorage.getItem("sindicoIdsindico") || !localStorage.getItem("moradorIdmorador")) {
+            var idsindico = localStorage.getItem("sindicoIdsindico");
+            idmorador = "";
+        } else{
+            var idsindico = "";
+        }
+
+        if (localStorage.getItem("administradoraIdadministradora")) {
+            var idadministradora = localStorage.getItem("administradoraIdadministradora");
+        } else{
+            var idadministradora = "";
+        }
+
+        // retirar botão inserir
+        if (localStorage.getItem("moradorIdmorador")) {
+            $('.inserirenquetes').addClass('invisivel');
+        }
+        if (localStorage.getItem("administradoraIdadministradora") || localStorage.getItem("sindicoIdsindico")) {
+            $('.inserirenquetes').removeClass('invisivel');
+        }
+
+        $.ajax({
+
+            url: $server+"functionAppAssembleia.php?idcondominio="+localStorage.getItem("condominioId")+"&idmorador="+localStorage.getItem("moradorIdmorador")+"&idsindico="+localStorage.getItem("sindicoIdsindico")+"&idadministradora="+localStorage.getItem("administradoraIdadministradora")+"&action=list",
+            dataType : "json",
+            success: function(data) {
+                //console.log(data);
+                if (data!=null) {
+                    myApp.hideIndicator();
+                    var dataassembleia = "";
+                    var delassembleia = "";
+                    var swipeout = "";
+                    var invisivel = "invisivel";
+                    var qtd = data.assembleia.length;
+                    var view = "";
+                    var textbold = "";
+
+                    for (var i = 0; i < qtd; i++) {
+
+                        if (data.assembleia[i].view==0) {
+                            //view = '<div class="item-after icon-view"><i class="fa fa-lg fa-eye color-blue"></i></div>';
+                            textbold = " textbold";
+                        }else{
+                            view = "";
+                        }
+
+                        delassembleia = "onclick = delassembleia('"+data.assembleia[i].guid+"',"+i+");"
+                        dataassembleia += '<li date-date="'+data.assembleia[i].dataAssembleia+'" class="'+swipeout+' swipeout-assembleia" data-index="'+i+'">'+
+                                                  '<a href="#assembleiacont" onclick="assembleiacont('+data.assembleia[i].idAssembleia+','+false+','+i+')" class="swipeout-content item-link item-content">'+
+                                                    '<div class="item-media">'+
+                                                      '<img src="'+data.assembleia[i].urlProfile+'" >'+
+                                                    '</div>'+
+                                                    '<div class="item-inner'+textbold+'">'+
+                                                      '<div class="item-title-row">'+
+                                                        '<div class="item-title">'+data.assembleia[i].tituloAssembleia+'</div>'+
+                                                        view+
+                                                      '</div>'+
+                                                      '<div class="item-subtitle">'+data.assembleia[i].dataAssembleia+'</div>'+
+                                                      '<div class="item-text">'+data.assembleia[i].descricaoAssembleia+'</div>'+
+                                                    '</div>'+
+                                                  '</a>'+
+                                                  '<div class="'+invisivel+' swipeout-actions-right">'+
+                                                    '<a href="#" '+delassembleia+' class="action1 bg-red">Apagar</a>'+
+                                                  '</div>'+
+                                                '</li>';
+                        textbold = "";
+                    }
+
+                    $("#assembleia-cont").html(dataassembleia);
+                }else{
+                    myApp.hideIndicator();
+                    $("#assembleia-cont").html("<li class='semregistro'>Nenhum registro cadastrado</li>");
+                }            
+            },error: function(data) {
+                    myApp.hideIndicator();
+                    $("#assembleia-cont").html("<li class='semregistro'>Nenhum registro cadastrado</li>");
+            }
+        });
+    //alert("Entrei");
+}
+
+///////////////////////////////////// assembleia conteudo ///////////////////////////
+function assembleiacont(id,push,eq){
+
+    myApp.showIndicator();
+    $('#assembleiacont-cont').html("");
+    $('#assembleiarespcont-cont').html("");
+
+        $.ajax({
+            url: $server+"functionAppAssembleia.php?idassembleia="+id+"&idmorador="+localStorage.getItem("moradorIdmorador")+"&idsindico="+localStorage.getItem("sindicoIdsindico")+"&idportaria="+localStorage.getItem("portariaIdportaria")+"&idadministradora="+localStorage.getItem("administradoraIdadministradora")+"&action=listcont",
+            dataType : "json",
+            success: function(data) {
+            myApp.hideIndicator();
+                var dataassembleia = "";
+                var qtd = data.assembleia.length;
+                var imgAssembleia = "";
+                var imgZoom;
+                var pdfView;
+                var imgTitle = $nameapp;
+                var viewComun = "";
+                var listView = "";
+                var buturl="";
+
+                for (var i = 0; i < qtd; i++) {
+                    //console.log(qtd);
+                    //if ((localStorage.getItem("sindicoIdsindico") || localStorage.getItem("administradoraIdadministradora")) && data.assembleia[i].view!=null) {
+                        var qtdview = data.assembleia[i].view.length;
+                        
+                        if (qtdview>0) {
+
+                            var listView = '<div class="page" data-page="listView">'+
+                                            '<div class="navbar">'+
+                                                '<div class="navbar-inner">'+
+                                                  '<div class="left"><a href="#" class="open-panel link icon-only"><i class="icon icon-bars"></i></a></div>'+
+                                                    '<div class="center">VISUALIZADO POR</div>'+
+                                                    '<div class="right"><a href="#" class="back link icon-only"><i class="icon icon-back"></i></a></div>'+
+                                                    '<div class="right no-margin"><a href="#index" class="link icon-only"><i class="icon fa fa-home"></i></a></div>'+
+                                                '</div>'+
+                                            '</div>'+
+                                              '<div class="page-content">'+
+                                                '<div class="list-block media-list tablet">'+
+                                                  '<ul>';
+                            var domicilio = "";
+                            $$.each(data.assembleia[i].view, function (chave,dados)
+                            {
+                                        if (dados.domicilioView!="null" && dados.domicilioView!=null) {
+                                            domicilio = dados.domicilioView;
+                                        }
+
+                                        listView += '<li class="data-index="'+i+'">'+
+                                                          '<a href="#" class="item-link item-content">'+
+                                                            '<div class="item-media">'+
+                                                              '<img src="'+dados.urlProfileView+'" >'+
+                                                            '</div>'+
+                                                            '<div class="item-inner">'+
+                                                              '<div class="item-title-row no-arrow">'+
+                                                                '<div class="item-title">'+dados.nameView+'</div>'+
+                                                              '</div>'+
+                                                              '<div class="item-subtitle">'+dados.dataView+'</div>'+
+                                                              '<div class="item-text">'+domicilio+'</div>'+
+                                                            '</div>'+
+                                                          '</a>'+
+                                                        '</li>';
+                                        domicilio = "";
+                            });
+                                    listView +=  '</ul>'+
+                                                '</div>'+
+                                              '</div>'+
+                                            '</div>';
+                            localStorage.setItem("listView", listView);
+
+                            viewComun = '<div class="ks-facebook-view"><a href="#" onClick="listView()");" style="margin-top: 3px;">'+qtdview+' <i class="fa fa-lg fa-eye color-blue"></i></a></div>';
+                        }
+                    //}
+
+
+                    //atualizar condominio logado
+                    if (push==true && localStorage.getItem("sindicoIdsindico")) {
+                        updateCond(data.assembleia[i].idCondominio,true);
+                    }
+                    if (push==true && localStorage.getItem("administradoraIdadministradora")) {
+                        updateCondAdministradora(data.assembleia[i].idCondominio,true);
+                    }
+
+                    if (data.assembleia[i].urlAssembleia!="images/sem_foto_icone.jpg") {
+
+                        myPhotoBrowserAssembleiacont = myApp.photoBrowser({
+                            theme: 'dark',
+                            ofText: 'de',
+                            backLinkText: '',
+                            spaceBetween: 0,
+                            navbar: true,
+                            toolbar: false,
+                            photos : [data.assembleia[i].urlAssembleia],
+                            type: 'popup'
+                        });
+
+                            if (data.assembleia[i].urlAssembleia.indexOf(".pdf")!=-1 || data.assembleia[i].urlAssembleia.indexOf(".PDF")!=-1) {
+                                pdfView = "onclick=openURLBrowser('"+data.assembleia[i].urlAssembleia+"');";
+
+                                    imgAssembleia = '<div class="card-content-cont bg-red" '+pdfView+'><i class="fa fa-file-pdf-o fa-3x"></i>'+
+                                                                //'<img src="images/icon_pdf.png" '+pdfView+' width="100%">'+
+                                                                '<div class="view-pdf">Clique para visualizar</div>'+
+                                                            '</div>';
+                            }else{
+                                imgZoom = "onclick=myPhotoBrowserAssembleiacont.open();";
+
+                                if (data.assembleia[i].urlAssembleia!="images/sem_foto_icone.jpg") {
+                                    imgAssembleia = '<div class="card-content-cont"><i '+imgZoom+' class="fa fa-search-plus fa-3x"></i>'+
+                                                                '<img src="'+data.assembleia[i].urlAssembleia+'" '+imgZoom+' width="100%">'+
+                                                            '</div>';
+                                }
+                            }
+                    }
+                    if (data.assembleia[i].urlAssembleiaLive) {
+                        buturl = '<p class="buttons-row">'+
+                                  '<a onclick="openURLBrowser(\''+data.assembleia[i].urlAssembleiaLive+'\')" id="butassembleialive" class="button button-big button-fill button-raised color-blue">ASSISTIR ASSEMBLEIA</a>'+
+                                '</p>';
+                    }
+
+                    dataassembleia += '<li>'+
+                                            '<div class="card-cont ks-facebook-card">'+ imgAssembleia +
+                                                '<div class="card-header">'+
+                                                    '<div class="ks-facebook-avatar">'+
+                                                        '<img src="'+data.assembleia[i].urlProfile+'" width="34">'+
+                                                    '</div>'+
+                                                    '<div class="ks-facebook-name" style="top: 5px;position: relative;">'+data.assembleia[i].name+'</div>'+
+                                                    //'<div class="ks-facebook-date">'+data.assembleia[i].dataPost+'</div>'+
+                                                    viewComun+
+                                                '</div>'+
+                                                '<div class="card-content-inner">'+
+                                                    '<p class="facebook-title">'+data.assembleia[i].tituloAssembleia+'</p>'+
+                                                    '<p class="facebook-date">'+data.assembleia[i].dataAssembleia+'</p>'+
+                                                    '<p class="facebook-date">'+nl2br(data.assembleia[i].descricaoAssembleia)+'</p>'+
+                                                    buturl+
+                                                '</div>'+
+                                            '</div>'+
+                                        '</li>';
+                        imgAssembleia = "";
+
+                    $('#assembleiacont-cont').html(dataassembleia);
+                    
+                    //marcar assembleia como lido
+                    $('#assembleia-cont li[data-index='+eq+'] a .item-inner').removeClass("textbold");
+                    //console.log(data.assembleia[i].moradorview);
+                    if (data.assembleia[i].moradorview===true || data.assembleia[i].portariaview===true || data.assembleia[i].sindicoview===true || data.assembleia[i].adminview===true) {
+                        console.log("subtratir badges assembleia condominio");
+                        //subtrair badges
+                        if ($(".badgeassembleia span").html()!="") {
+                            //subtrair badge icon
+                            $(".badgeassembleia span").html(parseInt($(".badgeassembleia span").text())-1);
+                        }
+                    }
+
+                }
+
+
+            },error: function(data) {
+                myApp.hideIndicator();
+                myApp.alert('Erro! Tente novamente.');
+            }
+        });
+
+
+        /////////// lista pautas ////////////////
+
+        $.ajax({
+            url: $server+"functionAppPauta.php?idassembleia="+id+"&idmorador="+localStorage.getItem("moradorIdmorador")+"&idcondominio="+localStorage.getItem("condominioId")+"&action=list",
+            dataType : "json",
+            success: function(data) {
+                if (data!=null) {
+                    myApp.hideIndicator();
+                    var datapauta = "";
+                    var qtd = data.pauta.length;
+                    var delpauta = "";
+                    var datafim = "";
+                    var invisivel ="invisivel ";
+                    var swipeout ="";
+                    var enablevoto ="";
+
+                    for (var i = 0; i < qtd; i++) {
+
+                    if (localStorage.getItem("administradoraIdadministradora") || localStorage.getItem("sindicoIdsindico")) {
+                        swipeout = "swipeout ";
+                        invisivel="";
+                    }
+                    if (data.pauta[i].enablevoto==0) {
+                        swipeout += "disabled";
+                        if (i==0) {
+                            datapauta += "<li class='notpermission color-red'>Você não tem permissão para participar dessa votação, favor entrar em contato com a administração.</li>";
+                        }
+                    }
+                    if (data.pauta[i].dataFim!="00/00/0000 ") {
+                        datafim = '<div class="item-text"> Prazo final: '+data.pauta[i].dataFim+'</div>';
+                    }else{
+                        datafim = "";
+                    }
+                        
+                        delpauta = "onclick = delpauta('"+data.pauta[i].guid+"',"+i+");"
+                        datapauta += '<li class="'+swipeout+' swipeout-pauta" data-index="'+i+'">'+
+                                                  '<a href="#pautacont" onclick="pautacont('+data.pauta[i].idPauta+')" class="swipeout-content item-link item-content">'+
+                                                    '<div class="item-media">'+
+                                                      '<img src="images/enquete_icone.png" >'+
+                                                    '</div>'+
+                                                    '<div class="item-inner">'+
+                                                      '<div class="item-title-row">'+
+                                                        '<div class="item-title" style="height: auto;line-height: 24px;white-space: normal;">'+data.pauta[i].perguntaPauta+'</div>'+
+                                                      '</div>'+
+                                                      datafim+
+                                                    '</div>'+
+                                                  '</a>'+
+                                                    '<div class="'+invisivel+'swipeout-actions-right">'+
+                                                    '<a href="#" '+delpauta+' class="action1 bg-red">Encerrar</a>'+
+                                                  '</div>'+
+                                                '</li>';
+                        $('#pauta-cont').html(datapauta);
+                    swipeout ="";
+                    }
+                }else{
+                    myApp.hideIndicator();
+                    $('#pauta-cont').html("<li class='semregistro'>Nenhum registro cadastrado</li>");
+                }
+            },error: function(data) {
+                myApp.hideIndicator();
+                $('#pauta-cont').html("<li class='semregistro'>Nenhum registro cadastrado</li>");
+                //myApp.alert('Erro! Tente novamente.');
+            }
+        });
+
+}
+
+/////////////////////////////////////  deletar pauta ///////////////////////////
+function delpauta(guid,eq){
+
+    myApp.confirm('Deseja encerrar essa pauta?', function () {
+
+        myApp.showIndicator();
+
+        $.ajax({
+            url: $server+"functionAppPauta.php?guid="+guid+"&action=encerrar",
+            data : "get",
+            success: function(data) {
+            if (data!="ok") {
+                myApp.hideIndicator();
+                myApp.alert('Erro! Tente novamente ='+data);
+            } else {
+                myApp.hideIndicator();
+                myApp.swipeoutDelete($$('li.swipeout-pauta').eq($("li.swipeout-pauta[data-index="+eq+"]").index()));
+                //myApp.swipeoutDelete($$('li.swipeout-servico').eq(eq));
+            }
+            
+            },error: function(data) {
+                myApp.hideIndicator();
+                myApp.alert('Erro! Tente novamente.');
+            }
+        });
+    });
+
+}
+
+///////////////////////////////////// pauta conteudo ///////////////////////////
+function pautacont(id){
+
+    myApp.showIndicator();
+    $('#pautacont-cont').html("");
+    $('#pautarespcont-cont').html("");
+
+        $.ajax({
+            url: $server+"functionAppPauta.php?idpauta="+id+"&iddomicilio="+localStorage.getItem("moradorIddomicilio")+"&idmorador="+localStorage.getItem("moradorIdmorador")+"&action=listcont",
+            dataType : "json",
+            success: function(data) {
+                myApp.hideIndicator();
+
+                $("#butverresultadopauta").attr("onclick","pautaresultado(\'"+id+"\')");
+            
+
+                if (data.pauta.javotou==1) {
+                    $("#butinserirresppauta").attr("disabled","disabled");
+                    $("#butinserirresppauta").html("SUA UNIDADE JÁ PARTICIPOU!");
+                }else{
+                    $("#butinserirresppauta").removeAttr("disabled","disabled");
+                    $("#butinserirresppauta").html("ENVIAR RESPOSTA");
+                }
+                var datapauta = "";
+                var datafim = "";
+                var qtd = data.pauta.pautaop.length;
+                    if (data.pauta.dataPautaFim!="00/00/0000 ") {
+                        datafim = '<div class="ks-facebook-date"> Prazo final: '+data.pauta.dataPautaFim+'</div>';
+                    }else{
+                        datafim = "";
+                    }
+
+                    datapauta += '<li>'+
+                                            '<div class="card-cont ks-facebook-card">'+
+                                                '<div class="card-header">'+
+                                                    '<div class="ks-facebook-avatar">'+
+                                                        '<input type="hidden" id="idpauta" value="'+data.pauta.idPauta+'">'+
+                                                        '<img src="images/enquete_icone.png" width="34" style="min-width: 34px;max-height: 34px;">'+
+                                                    '</div>'+
+                                                    '<div class="ks-facebook-name">'+data.pauta.perguntaPauta+'</div>'+
+                                                    datafim+
+                                                '</div>'+
+                                            '</div>'+
+                                        '</li>';
+
+                    for (var i = 0; i < qtd; i++) {
+                        
+                        datapauta += '<li>'+
+                                            '<label class="label-radio label-radio-visitante-per item-content">'+
+                                              '<input type="radio" name="resppauta" id="resppauta" value="'+data.pauta.pautaop[i].idPautaOp+'">'+
+                                              '<div class="item-media item-media-visitante">'+
+                                                '<i class="icon icon-form-radio"></i>'+
+                                              '</div>'+
+                                              '<div class="item-inner">'+
+                                                '<div class="item-title item-title-visitante">'+data.pauta.pautaop[i].nomePautaOpcoes+'</div>'+
+                                              '</div>'+
+                                            '</label>'+
+                                        '</li>';
+                    }
+                    $('#pautacont-cont').html(datapauta);
+
+
+
+                    /////////// lista as respostas //////////
+
+                    $.ajax({
+                        url: $server+"functionAppResposta.php?iddestino=18&idpostdestino="+id+"&action=list",
+                        dataType : "json",
+                        success: function(data) {
+                        
+                            var dataresposta = '<li class="item-divider border-top-tit">Respostas</li>';
+                            var qtd = data.resposta.length;
+                            var imgResposta = "";
+                            var imgZoom;
+                            var imgTitle = $nameapp;
+                            var dataresp;
+
+                            for (var i = 0; i < qtd; i++) {
+
+                                if (data.resposta[i].urlResposta!="images/sem_foto_icone.jpg") {
+
+                                myPhotoBrowserRespostacont = myApp.photoBrowser({
+                                    theme: 'dark',
+                                    ofText: 'de',
+                                    backLinkText: '',
+                                    spaceBetween: 0,
+                                    navbar: true,
+                                    toolbar: false,
+                                    photos : [data.resposta[i].urlResposta],
+                                    type: 'popup'
+                                });
+
+                                    imgZoom = "onclick=myPhotoBrowserRespostacont.open();";
+                                    imgResposta = '<div class="card-content-cont">'+
+                                                                '<i '+imgZoom+' class="fa fa-search-plus fa-3x"></i>'+
+                                                                '<img src="'+data.resposta[i].urlResposta+'" '+imgZoom+' width="100%">'+
+                                                            '</div>';
+                                }
+
+                                dataresposta += '<li>'+
+                                                        '<div class="card-cont ks-facebook-card">'+ imgResposta +
+                                                            '<div class="card-header">'+
+                                                                '<div class="ks-facebook-avatar">'+
+                                                                    '<img src="'+data.resposta[i].urlProfile+'" width="34">'+
+                                                                '</div>'+
+                                                                '<div class="ks-facebook-name">'+data.resposta[i].name+'</div>'+
+                                                                '<div class="ks-facebook-date">'+data.resposta[i].dataResposta+'</div>'+
+                                                            '</div>'+
+                                                            '<div class="card-content-inner">'+
+                                                                '<p class="facebook-date">'+nl2br(data.resposta[i].descricaoResposta)+'</p>'+
+                                                            '</div>'+
+                                                        '</div>'+
+                                                    '</li>';
+                                imgResposta = "";
+                            }
+
+                            $('#pautarespcont-cont').append(dataresposta);
+
+                        },error: function(data) {
+                            //myApp.hideIndicator();
+                            //myApp.alert('Erro! Tente novamente.');
+                        }
+                    });
+
+                    dataresp = '<div class="list-block">'+
+                                  '<ul>'+
+                                    '<li class="item-divider border-top-tit">Envie sua resposta</li>'+
+                                    '<li class="align-top">'+
+                                      '<div class="item-content">'+
+                                        '<div class="item-inner">'+
+                                          '<div class="item-title label">Descrição</div>'+
+                                            '<div class="item-input">'+
+                                              '<input type="hidden" id="iddestinoresp" value="18">'+
+                                              '<input type="hidden" id="idpostdestinoresp" value="'+id+'">'+
+                                                '<textarea id="txtdescricaoresp" class="resizable" style="height:76px" placeholder="Informe uma descrição"></textarea>'+
+                                            '</div>'+
+                                        '</div>'+
+                                      '</div>'+
+                                    '</li>'+
+                                    '<li>'+
+                                      '<div class="item-content">'+
+                                        '<div class="item-inner">'+
+                                          '<div class="item-title label">Imagem</div>'+
+                                          '<div class="item-input">'+
+                                            '<div id="imagem-resp" class="optionCameraResp custom-file-input" onClick="optionCameraResp()"></div>'+
+                                              '<div class="img-preview">'+
+                                                '<img src="" id="preview-resp"  width="100" height="80">'+
+                                              '</div>'+
+                                          '</div>'+
+                                        '</div>'+
+                                      '</div>'+
+                                    '</li>'+
+                                  '</ul>'+
+                                '</div>'+
+                                '<div class="content-block"><a href="#" id="butinserirresp" onclick="butinserirresp()" class="button button-big button-fill button-raised color-indigo button-full">ENVIAR</a></div>';
+                        
+                        $('.resppauta-cont').html(dataresp);
+            
+            },error: function(data) {
+                myApp.hideIndicator();
+                myApp.alert('Erro! Tente novamente.');
+            }
+        });
+    //alert("Entrei");
+}
+
+
+///////////////////////////// acao inserir resposta pauta ///////////////////////////
+$('#butinserirresppauta').on('click', function(){
+    //alert("enviar");
+
+    if ($('#resppauta:checked').val()) {
+
+            enviarrespostapauta();
+
+    }else{
+        myApp.alert('Selecione uma opção');    
+    }
+
+});
+
+var $$ip;
+///////////////////////////// enviar resposta pauta ///////////////////////////
+function enviarrespostapauta()
+{
+ 
+ //alert("entrei");
+        $$idmorador = localStorage.getItem("moradorIdmorador");
+        $$iddomicilio = localStorage.getItem("moradorIddomicilio");
+        $$idpauta = $$('#idpauta').val();
+        $$idpautaopcoes = $('#resppauta:checked').val();
+
+        myApp.showIndicator();
+
+        // pega ip
+        $.getJSON('https://api.ipgeolocation.io/ipgeo?apiKey=db3b2c9a123647a0a2f0be64940ddfe1', function(data) {
+          $$ip = data.ip;
+
+            // envia voto com ip
+            $.ajax($server+'functionAppPauta.php?', {
+                type: "post",
+                data: "ip="+$$ip+"&iddomicilio="+$$iddomicilio+"&idmorador="+$$idmorador+"&idpauta="+$$idpauta+"&idpautaopcoes="+$$idpautaopcoes+"&action=addVoto",
+            })
+
+              .fail(function() {
+                myApp.hideIndicator();
+                myApp.alert('Erro! Tente novamente.');
+              })     
+              .done(function(data) {
+                if (data=="ok") {
+                    myApp.hideIndicator();
+                    myApp.alert('Resposta inserida com sucesso!', function () { mainView.router.load({pageName: 'pautaresultado'}); pautaresultado($$idpauta);});
+                }else if(data=="not"){
+                    myApp.hideIndicator();
+                    myApp.alert('Ops! Você já participou.', function () { mainView.router.back();});
+                }else{
+                    myApp.hideIndicator();
+                    myApp.alert('Erro! Tente novamente.');
+                }
+              });
+
+        });
+}
+
+///////////////////////////////////// pauta resultado ///////////////////////////
+function pautaresultado(id){
+
+    myApp.showIndicator();
+    //var dataservico;
+    $('#pautaresultado-cont').html("");
+    //$('#idenquete').val("");
+        $.ajax({
+            url: $server+"functionAppPauta.php?idpauta="+id+"&action=listresult",
+            dataType : "json",
+            success: function(data) {
+            myApp.hideIndicator();
+
+                var datapauta = "";
+                var datafim = "";
+                var qtd = data.pauta.pautaop.length;
+                var auxTotal;
+                var totalvotos;
+                var colorOp = "";
+                    
+                    if (data.pauta.dataPautaFim!="00/00/0000 ") {
+                        datafim = '<div class="ks-facebook-date"> Prazo final: '+data.pauta.dataPautaFim+'</div>';
+                    }else{
+                        datafim = "";
+                    }
+
+                    datapauta += '<li>'+
+                                            '<div class="card-cont ks-facebook-card">'+
+                                                '<div class="card-header">'+
+                                                    '<div class="ks-facebook-avatar">'+
+                                                        '<img src="images/enquete_icone.png" width="34" style="min-width: 34px;max-height: 34px;">'+
+                                                    '</div>'+
+                                                    '<div class="ks-facebook-name">'+data.pauta.perguntaPauta+'</div>'+
+                                                    datafim+
+                                                '</div>'+
+                                            '</div>'+
+                                        '</li>';
+
+                    for (var i = 0; i < qtd; i++) {
+                        if (data.pauta.totalVotos!=0) {
+                            auxTotal = (data.pauta.pautaop[i].countVotos / data.pauta.totalVotos) * 100;
+                            totalvotos = data.pauta.totalVotos;
+                        }else{
+                            auxTotal = 0;
+                            totalvotos = 0;
+                        }
+                        //console.log("auxTotal = "+auxTotal);
+                        if (auxTotal==0) {
+                            stylepercent = "display: none;"
+                        }else{
+                            stylepercent = "width: calc("+auxTotal.toFixed(0)+"% - 40px);"
+                        }
+                        if (i == 0) {
+                            colorOp = "bg-deeporange";
+                        }
+                        if (i == 1) {
+                            colorOp = "bg-lightgreen";
+                        }
+                        if (i == 2) {
+                            colorOp = "bg-amber";
+                        }
+                        if (i == 3) {
+                            colorOp = "bg-purple";
+                        }
+                        if (i == 4) {
+                            colorOp = "bg-brown";
+                        }
+                        datapauta += '<li>'+
+                                            '<label class="label-radio label-radio-enquete item-content bg-blue">'+
+                                              '<div class="item-media item-media-enquete">'+auxTotal.toFixed(0)+'%</div>'+
+                                              '<div class="item-inner bg-enquetes-votos">'+
+                                                '<div class="item-title item-title-visitante">'+data.pauta.pautaop[i].nomePautaOpcoes+'</div>'+
+                                              '</div>'+
+                                              '<div class="item-inner enquetes-votos-percente '+colorOp+'" style="'+stylepercent+'"></div>'+
+                                            '</label>'+
+                                        '</li>';
+                    }
+                        datapauta += '<li>'+
+                                            '<label class="label-radio label-radio-enquete item-content">'+
+                                              '<div class="item-inner">'+
+                                                '<div class="item-title item-title-visitante total-votos">Total de votos = '+totalvotos+'</div>'+
+                                              '</div>'+
+                                            '</label>'+
+                                        '</li>';
+                    $('#pautaresultado-cont').html(datapauta);
+            },error: function(data) {
+                myApp.hideIndicator();
+                myApp.alert('Erro! Tente novamente.', function () { mainView.router.back();});
+            }
+        });
+    //alert("Entrei");
+}
 
 // Pull to refresh content
 var ptrContent = $$('.enquetes');
@@ -5124,7 +5996,7 @@ function enquetescont(id){
                                                 '<div class="card-header">'+
                                                     '<div class="ks-facebook-avatar">'+
                                                         '<input type="hidden" id="idenquete" value="'+data.enquetes.idEnquete+'">'+
-                                                        '<img src="images/enquete_icone.png" width="34">'+
+                                                        '<img src="images/enquete_icone.png" width="34" style="min-width: 34px;max-height: 34px;">'+
                                                     '</div>'+
                                                     '<div class="ks-facebook-name">'+data.enquetes.perguntaEnquete+'</div>'+
                                                     datafim+
@@ -5156,7 +6028,7 @@ function enquetescont(id){
     //alert("Entrei");
 }
 
-///////////////////////////// acao inserir enquete ///////////////////////////
+///////////////////////////// acao inserir resposta enquete ///////////////////////////
 $('#butinserirrespenquetes').on('click', function(){
     //alert("enviar");
 
@@ -5238,7 +6110,7 @@ function enquetesresultado(id){
                                             '<div class="card-cont ks-facebook-card">'+
                                                 '<div class="card-header">'+
                                                     '<div class="ks-facebook-avatar">'+
-                                                        '<img src="images/enquete_icone.png" width="34">'+
+                                                        '<img src="images/enquete_icone.png" width="34" style="min-width: 34px;max-height: 34px;">'+
                                                     '</div>'+
                                                     '<div class="ks-facebook-name">'+data.enquetes.perguntaEnquete+'</div>'+
                                                     datafim+
@@ -5544,11 +6416,9 @@ function cameraServico() {
 // Take picture using device camera and retrieve image as base64-encoded string
     navigator.camera.getPicture(onSuccessServico, onFailServico, {
     quality: 80,
-    allowEdit : true,
     targetWidth: 1500,
     correctOrientation: true,
-    destinationType: Camera.DestinationType.DATA_URL,
-    saveToPhotoAlbum: true
+    destinationType: Camera.DestinationType.DATA_URL
     });
 }
 
@@ -5557,7 +6427,6 @@ function cameraFileServico(source) {
 // Retrieve image file location from specified source
     navigator.camera.getPicture(onSuccessServico, onFailServico, {
     quality: 50,
-    allowEdit: true,
     targetWidth: 1000,
     destinationType: Camera.DestinationType.DATA_URL,
     sourceType: Camera.PictureSourceType.PHOTOLIBRARY
@@ -5882,11 +6751,9 @@ function cameraCronograma() {
 // Take picture using device camera and retrieve image as base64-encoded string
     navigator.camera.getPicture(onSuccessCronograma, onFailServico, {
     quality: 80,
-    allowEdit : true,
     targetWidth: 1500,
     correctOrientation: true,
-    destinationType: Camera.DestinationType.DATA_URL,
-    saveToPhotoAlbum: true
+    destinationType: Camera.DestinationType.DATA_URL
     });
 }
 
@@ -5895,7 +6762,6 @@ function cameraFileCronograma(source) {
 // Retrieve image file location from specified source
     navigator.camera.getPicture(onSuccessCronograma, onFailCronograma, {
     quality: 50,
-    allowEdit: true,
     targetWidth: 1000,
     destinationType: Camera.DestinationType.DATA_URL,
     sourceType: Camera.PictureSourceType.PHOTOLIBRARY
@@ -6191,11 +7057,9 @@ function cameraAddMorador() {
 // Take picture using device camera and retrieve image as base64-encoded string
     navigator.camera.getPicture(onSuccessAddMorador, onFailAddMorador, {
     quality: 80,
-    allowEdit : true,
     targetWidth: 1500,
     correctOrientation: true,
-    destinationType: Camera.DestinationType.DATA_URL,
-    saveToPhotoAlbum: true
+    destinationType: Camera.DestinationType.DATA_URL
     });
 }
 
@@ -6204,7 +7068,6 @@ function cameraFileAddMorador(source) {
 // Retrieve image file location from specified source
     navigator.camera.getPicture(onSuccessAddMorador, onFailAddMorador, {
     quality: 50,
-    allowEdit: true,
     targetWidth: 1000,
     destinationType: Camera.DestinationType.DATA_URL,
     sourceType: Camera.PictureSourceType.PHOTOLIBRARY
@@ -6322,16 +7185,16 @@ function enviaraddmorador()
           });
 }
 
-///////////////////////////// inserir morador teste///////////////////////////
+///////////////////////////// cadastro morador teste///////////////////////////
 $$('#cadastro-teste').on('click', function(){
         
         myApp.showIndicator();
         
         if ($$('#txtcodcondominio').val()=="") {
 
-            $$idcondominio = "87";
-            $$idbloco = "2239";
-            $$iddomicilio = "11240";
+            $$idcondominio = $$idcondominioteste;
+            $$idbloco = $$idblocoteste;
+            $$iddomicilio = $$iddomicilioteste;
             $$txtNomeAddMorador = $$('#txtnomeaddmoradorteste').val();
             $$txtEmailAddMorador = $$('#txtemailaddmoradorteste').val();
             $$cellPhoneaddMorador = $$('#cellphoneaddmoradorteste').val();
@@ -6957,12 +7820,10 @@ function cameraVisitante() {
 // Take picture using device camera and retrieve image as base64-encoded string
     navigator.camera.getPicture(onSuccessVisitante, onFailVisitante, {
     quality: 80,
-    allowEdit : true,
     targetWidth: 1500,
     correctOrientation: true,
     targetHeight: 1000,
-    destinationType: Camera.DestinationType.DATA_URL,
-    saveToPhotoAlbum: true
+    destinationType: Camera.DestinationType.DATA_URL
     });
 }
 
@@ -6971,7 +7832,6 @@ function cameraFileVisitante(source) {
 // Retrieve image file location from specified source
     navigator.camera.getPicture(onSuccessVisitante, onFailVisitante, {
     quality: 50,
-    allowEdit: true,
     targetWidth: 1000,
     targetHeight: 1000,
     destinationType: Camera.DestinationType.DATA_URL,
@@ -7106,6 +7966,8 @@ $('#butinserirvisitante').on('click', function(){
         // var nomesVisitantes = ('Apple Apricot Avocado Banana Melon Orange Peach Pear Pineapple').split(' ');
         var nomesVisitantes = "";
         var idsVisitantes = "";
+        var cpfsVisitantes = "";
+        var rgsVisitantes = "";
 
             $.ajax({
                 url: $server+"functionAppVisitante.php?idcondominio="+localStorage.getItem("condominioId")+"&status=0&action=listall",
@@ -7126,10 +7988,14 @@ $('#butinserirvisitante').on('click', function(){
                             name = data.visitante[i].name ? data.visitante[i].name : "";
                             nomesVisitantes += name+",";
                             idsVisitantes += data.visitante[i].idvisitante+",";
+                            cpfsVisitantes += data.visitante[i].cpf+",";
+                            rgsVisitantes += data.visitante[i].rg+",";
                         }
                     }
                     localStorage.setItem("nomesVisitantes", nomesVisitantes);
                     localStorage.setItem("idsVisitantes", idsVisitantes);
+                    localStorage.setItem("cpfsVisitantes", cpfsVisitantes);
+                    localStorage.setItem("rgsVisitantes", rgsVisitantes);
                     //console.log("nomesVisitantes = "+nomesVisitantes);
                     //console.log("idsVisitantes = "+idsVisitantes);
                     autocompletevisitante();
@@ -7144,6 +8010,8 @@ $('#butinserirvisitante').on('click', function(){
         // var nomesVisitantes = ('Apple Apricot Avocado Banana Melon Orange Peach Pear Pineapple').split(' ');
         var nomesVisitantes = "";
         var idsVisitantes = "";
+        var cpfsVisitantes = "";
+        var rgsVisitantes = "";
 
             $.ajax({
                 url: $server+"functionAppVisitante.php?idcondominio="+localStorage.getItem("condominioId")+"&status=0&action=listall",
@@ -7164,10 +8032,14 @@ $('#butinserirvisitante').on('click', function(){
                             name = data.visitante[i].name ? data.visitante[i].name : "";
                             nomesVisitantes += name+",";
                             idsVisitantes += data.visitante[i].idvisitante+",";
+                            cpfsVisitantes += data.visitante[i].cpf+",";
+                            rgsVisitantes += data.visitante[i].rg+",";
                         }
                     }
                     localStorage.setItem("nomesVisitantes", nomesVisitantes);
                     localStorage.setItem("idsVisitantes", idsVisitantes);
+                    localStorage.setItem("cpfsVisitantes", cpfsVisitantes);
+                    localStorage.setItem("rgsVisitantes", rgsVisitantes);
                     //console.log("nomesVisitantes = "+nomesVisitantes);
                     //console.log("idsVisitantes = "+idsVisitantes);
                     autocompletevisitante();
@@ -7181,8 +8053,11 @@ function autocompletevisitante(){
         if (localStorage.getItem("portariaIdportaria")) {
             var nomesVisitantesArray = localStorage.getItem("nomesVisitantes").split(',');
             var idsVisitantesArray = localStorage.getItem("idsVisitantes").split(',');
+            var cpfsVisitantesArray = localStorage.getItem("cpfsVisitantes").split(',');
+            var rgsVisitantesArray = localStorage.getItem("rgsVisitantes").split(',');
             //console.log("nomesVisitantesArray 1 = " + nomesVisitantesArray);
 
+            // search por nome
             var autocompleteDropdownExpand = myApp.autocomplete({
                 input: '#txtnomevisitante',
                 openIn: 'dropdown',
@@ -7209,6 +8084,63 @@ function autocompletevisitante(){
                     //console.log("autocomplete = "+autocomplete[0]);
                 }
             });
+
+            // search por cpf
+            var autocompleteDropdownExpandCpf = myApp.autocomplete({
+                input: '#txtcpfvisitante',
+                openIn: 'dropdown',
+                updateInputValueOnSelect: true,
+                expandInput: true, // expand input
+                source: function (autocomplete, query, render) {
+                    var results = [];
+                    if (query.length === 0) {
+                        render(results);
+                        return;
+                    }
+                    // Find matched items
+                    for (var i = 0; i < cpfsVisitantesArray.length; i++) {
+                        if (cpfsVisitantesArray[i].toLowerCase().indexOf(query.toLowerCase()) >= 0) results.push(cpfsVisitantesArray[i]);
+                    }
+                    // Render items by passing array with result items
+                    render(results);
+                },
+                onChange: function (autocomplete, value) {
+                    $$('#txtnomevisitante').find('input').val(value);
+                    editarvisitante(idsVisitantesArray[cpfsVisitantesArray.indexOf(value)],"expirados");
+                    console.log("value = "+cpfsVisitantesArray.indexOf(value));
+                    //console.log("id = "+idsVisitantesArray[nomesVisitantesArray.indexOf(value)]);
+                    //console.log("autocomplete = "+autocomplete[0]);
+                }
+            });
+
+            // search por rg
+            var autocompleteDropdownExpandCpf = myApp.autocomplete({
+                input: '#txtrgvisitante',
+                openIn: 'dropdown',
+                updateInputValueOnSelect: true,
+                expandInput: true, // expand input
+                source: function (autocomplete, query, render) {
+                    var results = [];
+                    if (query.length === 0) {
+                        render(results);
+                        return;
+                    }
+                    // Find matched items
+                    for (var i = 0; i < rgsVisitantesArray.length; i++) {
+                        if (rgsVisitantesArray[i].toLowerCase().indexOf(query.toLowerCase()) >= 0) results.push(rgsVisitantesArray[i]);
+                    }
+                    // Render items by passing array with result items
+                    render(results);
+                },
+                onChange: function (autocomplete, value) {
+                    $$('#txtnomevisitante').find('input').val(value);
+                    editarvisitante(idsVisitantesArray[rgsVisitantesArray.indexOf(value)],"expirados");
+                    console.log("value = "+rgsVisitantesArray.indexOf(value));
+                    //console.log("id = "+idsVisitantesArray[nomesVisitantesArray.indexOf(value)]);
+                    //console.log("autocomplete = "+autocomplete[0]);
+                }
+            });
+
         }
 }
 
@@ -7546,12 +8478,10 @@ function cameraVeiculo() {
 // Take picture using device camera and retrieve image as base64-encoded string
     navigator.camera.getPicture(onSuccessVeiculo, onFailVeiculo, {
     quality: 80,
-    allowEdit : true,
     targetWidth: 1500,
     correctOrientation: true,
     targetHeight: 1000,
-    destinationType: Camera.DestinationType.DATA_URL,
-    saveToPhotoAlbum: true
+    destinationType: Camera.DestinationType.DATA_URL
     });
 }
 
@@ -7560,7 +8490,6 @@ function cameraFileVeiculo(source) {
 // Retrieve image file location from specified source
     navigator.camera.getPicture(onSuccessVeiculo, onFailVeiculo, {
     quality: 50,
-    allowEdit: true,
     targetWidth: 1000,
     targetHeight: 1000,
     destinationType: Camera.DestinationType.DATA_URL,
@@ -7637,18 +8566,27 @@ function listMarcas(){
     $('.modelolistli').removeClass("visivel");
     myApp.showIndicator();
     var tipo = "";
+    var tiponome = "";
 
     if ($$("#txttipoveiculo").val()=="1") {
-        tipo = "carros";
+        tipo = "1";
+        tiponome = "carros";
     }else if ($$("#txttipoveiculo").val()=="2"){
-        tipo = "motos";
+        tipo = "2";
+        tiponome = "motos";
     }
 
     $.ajax({
-        url: "https://fipeapi.appspot.com/api/1/"+tipo+"/marcas.json",
+        //url: "https://fipeapi.appspot.com/api/1/"+tipo+"/marcas.json",
+        url: "https://parallelum.com.br/fipe/api/v1/"+tiponome+"/marcas",
+        //url: "https://veiculos.fipe.org.br/api/veiculos/ConsultarMarcas",
         dataType : "json",
+        type: "get",
+        /*type: "post",
+        data: "codigoTabelaReferencia=250&codigoTipoVeiculo="+tipo,*/
         success: function(data) {
             console.log("entrei-success");
+            //console.log(data);
             $('#txtmarcaveiculo').html("");
             if (data!=null) {
                 myApp.hideIndicator();
@@ -7657,7 +8595,8 @@ function listMarcas(){
 
                 marcaslist += '<option value="" data-marca-id="">Selecione uma marca</option>';
                 for (var i = 0; i < qtd; i++) {
-                    marcaslist += '<option value="'+data[i].fipe_name+'" data-marca-id="'+data[i].id+'">'+data[i].fipe_name+'</option>';
+                    //marcaslist += '<option value="'+data[i].fipe_name+'" data-marca-id="'+data[i].id+'">'+data[i].fipe_name+'</option>';
+                    marcaslist += '<option value="'+data[i].nome+'" data-marca-id="'+data[i].codigo+'">'+data[i].nome+'</option>';
                 }
 
             }
@@ -7665,9 +8604,42 @@ function listMarcas(){
             $('#txtmarcaveiculo').html(marcaslist);
             myApp.hideIndicator();
         },error: function(data) {
-            myApp.hideIndicator();
-            myApp.alert('Erro ao carregar dados, tente novamente!');
-            $('#txtmarcaveiculo').html("");
+
+
+            $.ajax({
+                url: "https://fipeapi.appspot.com/api/1/"+tipo+"/marcas.json",
+                //url: "https://parallelum.com.br/fipe/api/v1/carros/marcas",
+                //url: "https://veiculos.fipe.org.br/api/veiculos/ConsultarMarcas",
+                dataType : "json",
+                type: "get",
+                /*type: "post",
+                data: "codigoTabelaReferencia=250&codigoTipoVeiculo="+tipo,*/
+                success: function(data) {
+                    console.log("entrei-success");
+                    console.log(data);
+                    $('#txtmarcaveiculo').html("");
+                    if (data!=null) {
+                        myApp.hideIndicator();
+                        var qtd = data.length;
+                        var marcaslist = "";
+
+                        marcaslist += '<option value="" data-marca-id="">Selecione uma marca</option>';
+                        for (var i = 0; i < qtd; i++) {
+                            marcaslist += '<option value="'+data[i].fipe_name+'" data-marca-id="'+data[i].id+'">'+data[i].fipe_name+'</option>';
+                            //marcaslist += '<option value="'+data[i].Label+'" data-marca-id="'+data[i].Value+'">'+data[i].Label+'</option>';
+                        }
+
+                    }
+                    $('.marcalistli').addClass("visivel");
+                    $('#txtmarcaveiculo').html(marcaslist);
+                    myApp.hideIndicator();
+                },error: function(data) {
+                    myApp.hideIndicator();
+                    myApp.alert('Erro ao carregar dados, tente novamente!');
+                    $('#txtmarcaveiculo').html("");
+
+                }
+            });
 
         }
     });
@@ -7675,29 +8647,38 @@ function listMarcas(){
 ////////////////////////////// listar modelos ///////////////////////////
 function listModelos(){
     var tipo = "";
+    var tiponome = "";
 
     if ($$("#txttipoveiculo").val()=="1") {
-        tipo = "carros";
+        tipo = "1";
+        tiponome = "carros";
     }else if ($$("#txttipoveiculo").val()=="2"){
-        tipo = "motos";
+        tipo = "2";
+        tiponome = "motos";
     }
     var idmarca = $('#txtmarcaveiculo option:selected').attr('data-marca-id');
     //console.log("idmarca = "+idmarca);
     if (idmarca!="") {
         myApp.showIndicator();
         $.ajax({
-            url: "https://fipeapi.appspot.com/api/1/"+tipo+"/veiculos/"+idmarca+".json",
+            //url: "https://fipeapi.appspot.com/api/1/"+tipo+"/veiculos/"+idmarca+".json",
+            url: "https://parallelum.com.br/fipe/api/v1/"+tiponome+"/marcas/"+idmarca+"/modelos",
+            //url: "https://veiculos.fipe.org.br/api/veiculos/ConsultarModelos",
             dataType : "json",
+            type: "get",
+            /*type: "post",
+            data: "codigoTabelaReferencia=250&codigoTipoVeiculo="+tipo+"&codigoMarca="+idmarca,*/
             success: function(data) {
                 console.log("entrei-success");
                 $('#txtmodeloveiculo').html("");
                 if (data!=null) {
                     myApp.hideIndicator();
-                    var qtd = data.length;
+                    var qtd = data.modelos.length;
                     var modeloslist = "";
 
                     for (var i = 0; i < qtd; i++) {
-                        modeloslist += '<option value="'+data[i].fipe_name+'">'+data[i].fipe_name+'</option>';
+                        //modeloslist += '<option value="'+data[i].fipe_name+'">'+data[i].fipe_name+'</option>';
+                        modeloslist += '<option value="'+data.modelos[i].nome+'">'+data.modelos[i].nome+'</option>';
                     }
 
                 }
@@ -7705,9 +8686,39 @@ function listModelos(){
                 $('#txtmodeloveiculo').html(modeloslist);
                 myApp.hideIndicator();
             },error: function(data) {
-                myApp.hideIndicator();
-                myApp.alert('Erro ao carregar dados, tente novamente!');
-                $('#txtmodeloveiculo').html("");
+
+                $.ajax({
+                    url: "https://fipeapi.appspot.com/api/1/"+tipo+"/veiculos/"+idmarca+".json",
+                    //url: "https://parallelum.com.br/fipe/api/v1/"+tipo+"/marcas/"+idmarca+"/modelos",
+                    //url: "https://veiculos.fipe.org.br/api/veiculos/ConsultarModelos",
+                    dataType : "json",
+                    type: "get",
+                    /*type: "post",
+                    data: "codigoTabelaReferencia=250&codigoTipoVeiculo="+tipo+"&codigoMarca="+idmarca,*/
+                    success: function(data) {
+                        console.log("entrei-success");
+                        $('#txtmodeloveiculo').html("");
+                        if (data!=null) {
+                            myApp.hideIndicator();
+                            var qtd = data.length;
+                            var modeloslist = "";
+
+                            for (var i = 0; i < qtd; i++) {
+                                modeloslist += '<option value="'+data[i].fipe_name+'">'+data[i].fipe_name+'</option>';
+                                //modeloslist += '<option value="'+data.Modelos[i].nome+'">'+data.Modelos[i].nome+'</option>';
+                            }
+
+                        }
+                        $('.modelolistli').addClass("visivel");
+                        $('#txtmodeloveiculo').html(modeloslist);
+                        myApp.hideIndicator();
+                    },error: function(data) {
+                        myApp.hideIndicator();
+                        myApp.alert('Erro ao carregar dados, tente novamente!');
+                        $('#txtmodeloveiculo').html("");
+
+                    }
+                });
 
             }
         });
@@ -7860,7 +8871,16 @@ $('#inserircomuncondominio').on('click', function(){
                             $("#blocolistportaria.sembloco").removeClass("invisivel");
                             $("#blocolistportaria.sembloco").val(idBloco);
                             console.log("idBloco = "+$("#blocolistportaria.sembloco").val());
-                        }                        
+                        }
+
+                        if (localStorage.getItem("moradorIdmorador")) {
+                            console.log("moradorIdmorador");
+                            $('#blocolistmorador').addClass("invisivel");
+                            $("#blocolistmorador.sembloco").removeClass("invisivel");
+                            $("#blocolistmorador.sembloco").val(idBloco);
+                            console.log("idBloco = "+$("#blocolistmorador.sembloco").val());
+                        }
+
                     }
                 }
                 if (blocolistcomunicado!="") {
@@ -8184,6 +9204,16 @@ function comuncondominio(alvo){
         var idsindico = "";
     }
 
+    if (localStorage.getItem("sindicoIdsindico") && !localStorage.getItem("moradorIdmorador")) {
+        var idsindico = localStorage.getItem("sindicoIdsindico");
+        iddomicilio = "";
+        idbloco = "";
+        iddestino = "";
+        idmorador = "";
+    } else{
+        var idsindico = "";
+    }
+
     if (localStorage.getItem("administradoraIdadministradora")) {
         var idadministradora = localStorage.getItem("administradoraIdadministradora");
         iddomicilio = "";
@@ -8243,7 +9273,7 @@ function comuncondominio(alvo){
 
                         delcomuncondominio = "onclick = delcomuncondominio('"+data.comunicado[i].guid+"',"+i+");"
                         datacomunicado += '<li date-date="'+data.comunicado[i].dataComunicado+'" class="'+swipeout+' swipeout-comuncondominio" data-index="'+i+'">'+
-                                                  '<a href="#comunicadocont" onclick="comuncomunicadocont('+data.comunicado[i].idComunicado+','+i+')" class="swipeout-content item-link item-content">'+
+                                                  '<a href="#comunicadocont" onclick="comuncomunicadocont('+data.comunicado[i].idComunicado+','+false+','+i+')" class="swipeout-content item-link item-content">'+
                                                     '<div class="item-media">'+
                                                       '<img src="'+data.comunicado[i].urlProfile+'" >'+
                                                     '</div>'+
@@ -8375,7 +9405,7 @@ function comuncomunicadocont(id,push,eq){
                 var imgComunicado = "";
                 var imgZoom;
                 var pdfView;
-                var imgTitle = "Aptohome";
+                var imgTitle = $nameapp;
                 var viewComun = "";
                 var listView = "";
 
@@ -8491,14 +9521,17 @@ function comuncomunicadocont(id,push,eq){
                     //marcar comunicado como lido
                     $('#comuncondominio-cont li[data-index='+eq+'] a .item-inner').removeClass("textbold");
                     
-                    //subtrair badges
-                    if ($(".badgecomuncondominio span").html()!="") {
-                        //subtrair badge tab
-                        $(".badgecomuncondominio span").html(parseInt($(".badgecomuncondominio span").text())-1);
-                    }
-                    if ($(".badgecomunicado span").html()!="") {
-                        //subtrair badge icon
-                        $(".badgecomunicado span").html(parseInt($(".badgecomunicado span").text())-1);
+                    if (data.comunicado[i].moradorview==true || data.comunicado[i].portariaview==true || data.comunicado[i].sindicoview==true || data.comunicado[i].adminview==true) {
+                        console.log("subtratir badges comunicado condominio");
+                        //subtrair badges
+                        if ($(".badgecomuncondominio span").html()!="") {
+                            //subtrair badge tab
+                            $(".badgecomuncondominio span").html(parseInt($(".badgecomuncondominio span").text())-1);
+                        }
+                        if ($(".badgecomunicado span").html()!="") {
+                            //subtrair badge icon
+                            $(".badgecomunicado span").html(parseInt($(".badgecomunicado span").text())-1);
+                        }
                     }
                 }
 
@@ -8519,7 +9552,7 @@ function comuncomunicadocont(id,push,eq){
                 var qtd = data.resposta.length;
                 var imgResposta = "";
                 var imgZoom;
-                var imgTitle = "Aptohome";
+                var imgTitle = $nameapp;
                 var dataresp;
 
                 for (var i = 0; i < qtd; i++) {
@@ -8619,11 +9652,9 @@ function cameraComuncondominio() {
 // Take picture using device camera and retrieve image as base64-encoded string
     navigator.camera.getPicture(onSuccessComuncondominio, onFailComuncondominio, {
     quality: 80,
-    allowEdit : true,
     targetWidth: 1500,
     correctOrientation: true,
-    destinationType: Camera.DestinationType.DATA_URL,
-    saveToPhotoAlbum: true
+    destinationType: Camera.DestinationType.DATA_URL
     });
 }
 
@@ -8632,7 +9663,6 @@ function cameraFileComuncondominio(source) {
 // Retrieve image file location from specified source
     navigator.camera.getPicture(onSuccessComuncondominio, onFailComuncondominio, {
     quality: 50,
-    allowEdit: true,
     targetWidth: 1000,
     destinationType: Camera.DestinationType.DATA_URL,
     sourceType: Camera.PictureSourceType.PHOTOLIBRARY
@@ -8735,6 +9765,7 @@ $$('#pdfFileComuncondominio').on('change', function (e) {
         }
     }else{
         myApp.alert('Formato inválido! Escolha um arquivo no formato PDF.');
+        myApp.hideIndicator();
     }
 
 });
@@ -9019,7 +10050,7 @@ myApp.attachInfiniteScroll($$('.comunportariahome.infinite-scroll'));
 
                             urlComunPortaria = data.comunicado[i].urlProfile.replace("http://","https://");
                             datacomunicado += '<li date-date="'+data.comunicado[i].dataComunicado+'" data-index="'+i+'">'+
-                                                      '<a href="#comunicadocont" onclick="comunportariacont('+data.comunicado[i].idComunicado+','+i+')" class="item-link item-content">'+
+                                                      '<a href="#comunicadocont" onclick="comunportariacont('+data.comunicado[i].idComunicado+','+false+','+i+')" class="item-link item-content">'+
                                                         '<div class="item-media">'+
                                                           '<img src="'+urlComunPortaria+'" >'+
                                                         '</div>'+
@@ -9249,7 +10280,7 @@ function comunportaria(alvo){
 
                         delcomunportaria = "onclick = delcomunportaria('"+data.comunicado[i].guid+"',"+i+");"
                         datacomunicado += '<li date-date="'+data.comunicado[i].dataComunicado+'" class="'+swipeout+' swipeout-comunportaria" data-index="'+i+'">'+
-                                                  '<a href="#comunicadocont" onclick="comunportariacont('+data.comunicado[i].idComunicado+','+i+')" class="swipeout-content item-link item-content">'+
+                                                  '<a href="#comunicadocont" onclick="comunportariacont('+data.comunicado[i].idComunicado+','+false+','+i+')" class="swipeout-content item-link item-content">'+
                                                     '<div class="item-media">'+
                                                       '<img src="'+data.comunicado[i].urlProfile+'" >'+
                                                     '</div>'+
@@ -9389,7 +10420,7 @@ function comunportariacont(id,push,eq){
                 var pdfView;
                 var imgComunicado = "";
                 var imgZoom;
-                var imgTitle = "Aptohome";
+                var imgTitle = $nameapp;
                 var viewComun = "";
                 var listView = "";
 
@@ -9508,19 +10539,22 @@ function comunportariacont(id,push,eq){
                     //marcar comunicado portaria como lido
                     $('#comunportariahome-cont li[data-index='+eq+'] a .item-inner').removeClass("textbold");
                     
-                    //subtrair badges
-                    if ($(".badgecomunportaria span").html()!="") {
-                        //subtrair badge tab
-                        $(".badgecomunportaria span").html(parseInt($(".badgecomunportaria span").text())-1);
-                    }
-                    if ($(".badgecomunicado span").html()!="") {
-                        //subtrair badge icon
-                        $(".badgecomunicado span").html(parseInt($(".badgecomunicado span").text())-1);
-                    }
-                    //subtrair badges comunicado portaria home
-                    if ($(".badgecomunportariahome span").html()!="") {
-                        //subtrair badge tab
-                        $(".badgecomunportariahome span").html(parseInt($(".badgecomunportariahome span").text())-1);
+                    if (data.comunicado[i].moradorview==true || data.comunicado[i].portariaview==true || data.comunicado[i].sindicoview==true || data.comunicado[i].adminview==true) {
+                        console.log("subtratir badges comunicado condominio");
+                        //subtrair badges
+                        if ($(".badgecomunportaria span").html()!="") {
+                            //subtrair badge tab
+                            $(".badgecomunportaria span").html(parseInt($(".badgecomunportaria span").text())-1);
+                        }
+                        if ($(".badgecomunicado span").html()!="") {
+                            //subtrair badge icon
+                            $(".badgecomunicado span").html(parseInt($(".badgecomunicado span").text())-1);
+                        }
+                        //subtrair badges comunicado portaria home
+                        if ($(".badgecomunportariahome span").html()!="") {
+                            //subtrair badge tab
+                            $(".badgecomunportariahome span").html(parseInt($(".badgecomunportariahome span").text())-1);
+                        }
                     }
                 }
 
@@ -9540,7 +10574,7 @@ function comunportariacont(id,push,eq){
                 var qtd = data.resposta.length;
                 var imgResposta = "";
                 var imgZoom;
-                var imgTitle = "Aptohome";
+                var imgTitle = $nameapp;
                 var dataresp;
 
                 for (var i = 0; i < qtd; i++) {
@@ -9635,11 +10669,9 @@ function cameraResp() {
 // Take picture using device camera and retrieve image as base64-encoded string
     navigator.camera.getPicture(onSuccessResp, onFailResp, {
     quality: 80,
-    allowEdit : true,
     targetWidth: 1500,
     correctOrientation: true,
-    destinationType: Camera.DestinationType.DATA_URL,
-    saveToPhotoAlbum: true
+    destinationType: Camera.DestinationType.DATA_URL
     });
 }
 
@@ -9648,7 +10680,6 @@ function cameraFileResp(source) {
 // Retrieve image file location from specified source
     navigator.camera.getPicture(onSuccessResp, onFailResp, {
     quality: 50,
-    allowEdit: true,
     targetWidth: 1000,
     destinationType: Camera.DestinationType.DATA_URL,
     sourceType: Camera.PictureSourceType.PHOTOLIBRARY
@@ -9800,11 +10831,9 @@ function cameraComunportaria() {
 // Take picture using device camera and retrieve image as base64-encoded string
     navigator.camera.getPicture(onSuccessComunportaria, onFailComunportaria, {
     quality: 80,
-    allowEdit : true,
     targetWidth: 1500,
     correctOrientation: true,
-    destinationType: Camera.DestinationType.DATA_URL,
-    saveToPhotoAlbum: true
+    destinationType: Camera.DestinationType.DATA_URL
     });
 }
 
@@ -9813,7 +10842,6 @@ function cameraFileComunportaria(source) {
 // Retrieve image file location from specified source
     navigator.camera.getPicture(onSuccessComunportaria, onFailComunportaria, {
     quality: 50,
-    allowEdit: true,
     targetWidth: 1000,
     destinationType: Camera.DestinationType.DATA_URL,
     sourceType: Camera.PictureSourceType.PHOTOLIBRARY
@@ -9942,6 +10970,7 @@ $$('#pdfFileComunportaria').on('change', function (e) {
         }
     }else{
         myApp.alert('Formato inválido! Escolha um arquivo no formato PDF.');
+        myApp.hideIndicator();
     }
 
 });
@@ -10174,7 +11203,7 @@ function comunmorador(alvo){
 
                         delcomunmorador = "onclick = delcomunmorador('"+data.comunicado[i].guid+"',"+i+");"
                         datacomunicado += '<li date-date="'+data.comunicado[i].dataComunicado+'" class="'+swipeout+' swipeout-comunmorador" data-index="'+i+'">'+
-                                                  '<a href="#comunicadocont" onclick="comunmoradorcont('+data.comunicado[i].idComunicado+','+i+')" class="swipeout-content item-link item-content">'+
+                                                  '<a href="#comunicadocont" onclick="comunmoradorcont('+data.comunicado[i].idComunicado+','+false+','+i+')" class="swipeout-content item-link item-content">'+
                                                     '<div class="item-media">'+
                                                       '<img src="'+data.comunicado[i].urlProfile+'" >'+
                                                     '</div>'+
@@ -10271,7 +11300,7 @@ function comunmoradorcont(id,push,eq){
                 var qtd = data.comunicado.length;
                 var imgZoom;
                 var imgComunicado = "";
-                var imgTitle = "Aptohome";
+                var imgTitle = $nameapp;
                 var viewComun = "";
                 var listView = "";
 
@@ -10383,6 +11412,22 @@ function comunmoradorcont(id,push,eq){
                                         '</li>';
                         imgComunicado = "";
                     $('#comunicadocont-cont').html(datacomunicado);
+
+                    //marcar comunicado como lido
+                    $('#comunmorador-cont li[data-index='+eq+'] a .item-inner').removeClass("textbold");
+                    
+                    //subtrair badges
+                    if (data.comunicado[i].moradorview==true || data.comunicado[i].portariaview==true || data.comunicado[i].sindicoview==true || data.comunicado[i].adminview==true) {
+                        if ($(".badgecomunmorador span").html()!="") {
+                            //subtrair badge tab
+                            $(".badgecomunmorador span").html(parseInt($(".badgecomunmorador span").text())-1);
+                        }
+                        if ($(".badgecomunicado span").html()!="") {
+                            //subtrair badge icon
+                            $(".badgecomunicado span").html(parseInt($(".badgecomunicado span").text())-1);
+                        }
+                    }
+
                 }
             
             },error: function(data) {
@@ -10401,7 +11446,7 @@ function comunmoradorcont(id,push,eq){
                 var qtd = data.resposta.length;
                 var imgResposta = "";
                 var imgZoom;
-                var imgTitle = "Aptohome";
+                var imgTitle = $nameapp;
                 var dataresp;
 
                 for (var i = 0; i < qtd; i++) {
@@ -10484,18 +11529,7 @@ function comunmoradorcont(id,push,eq){
                     '</div>'+
                     '<div class="content-block"><a href="#" id="butinserirresp" onclick="butinserirresp()" class="button button-big button-fill button-raised color-indigo button-full">ENVIAR</a></div>';
             
-            $('.resp-cont').html(dataresp);
-            //marcar comunicado como lido
-            $('#comunmorador-cont li[data-index='+eq+'] a .item-inner').removeClass("textbold");
-            //subtrair badges
-            if ($(".badgecomunmorador span").html()!="") {
-                //subtrair badge tab
-                $(".badgecomunmorador span").html(parseInt($(".badgecomunmorador span").text())-1);
-            }
-            if ($(".badgecomunicado span").html()!="") {
-                //subtrair badge icon
-                $(".badgecomunicado span").html(parseInt($(".badgecomunicado span").text())-1);
-            }   
+            $('.resp-cont').html(dataresp); 
 
 }
 
@@ -10505,11 +11539,9 @@ function cameraComunmorador() {
 // Take picture using device camera and retrieve image as base64-encoded string
     navigator.camera.getPicture(onSuccessComunmorador, onFailComunmorador, {
     quality: 80,
-    allowEdit : true,
     targetWidth: 1500,
     correctOrientation: true,
-    destinationType: Camera.DestinationType.DATA_URL,
-    saveToPhotoAlbum: true
+    destinationType: Camera.DestinationType.DATA_URL
     });
 }
 
@@ -10518,7 +11550,6 @@ function cameraFileComunmorador(source) {
 // Retrieve image file location from specified source
     navigator.camera.getPicture(onSuccessComunmorador, onFailComunmorador, {
     quality: 50,
-    allowEdit: true,
     targetWidth: 1000,
     destinationType: Camera.DestinationType.DATA_URL,
     sourceType: Camera.PictureSourceType.PHOTOLIBRARY
@@ -10587,7 +11618,7 @@ $('#inserircomunmorador').on('click', function(){
 $('#butinserircomunmorador').on('click', function(){
     //alert("enviar");
 
-    if (($$('#blocolistmorador').val()!="") && ($$('#domiciliolistmorador').val()!="") && ($$('#moradorlistmorador').val()!="") && ($$('#txttitcomunmorador').val()!="") && ($$('#txtdescricaocomunmorador').val()!="")) {
+    if (($$('#blocolistmorador').val()!="" || $$('#blocolistmorador.sembloco').val()!="") && ($$('#domiciliolistmorador').val()!="") && ($$('#moradorlistmorador').val()!="") && ($$('#txttitcomunmorador').val()!="") && ($$('#txtdescricaocomunmorador').val()!="")) {
 
             enviarcomunmorador();
 
@@ -10627,6 +11658,7 @@ $$('#pdfFileComunmorador').on('change', function (e) {
         }
     }else{
         myApp.alert('Formato inválido! Escolha um arquivo no formato PDF.');
+        myApp.hideIndicator();
     }
 
 });
@@ -10794,7 +11826,7 @@ function interfonecont(idmorador,urlMorador,nome,apto){
 
         // seleciona som da notificação
         var sound;
-        sound = "https://www.aptohome.com.br/sounds/ton.mp3";
+        sound = "https://www.apptohome.com.br/sounds/ton.mp3";
 
         var media = new Media(sound, mediaSuccess, mediaError, mediaStatus);
 
@@ -11702,7 +12734,7 @@ function alertadechegadahome(alvo){
                     } else {
                         tipo = "";
                     }
-                    if (data.alerta[i].urlVeiculo!="https://www.aptohome.com.br/img/sem_foto_icone.jpg" || data.alerta[i].urlVeiculo!="http://www.aptohome.com.br/img/sem_foto_icone.jpg") {
+                    if (data.alerta[i].urlVeiculo!="https://www.apptohome.com.br/img/sem_foto_icone.jpg" || data.alerta[i].urlVeiculo!="http://www.apptohome.com.br/img/sem_foto_icone.jpg") {
                         alertaveiculo = '<div class="alertaveiculohome">'+
                                             '<div class="item-media" style="border:solid 4px '+data.alerta[i].corVeiculo+'">'+
                                                 '<img src="'+data.alerta[i].urlVeiculo+'" >'+
@@ -11893,7 +12925,7 @@ function alertadechegadacont(id){
                         } else {
                             tipo = "";
                         }
-                        if (data.alerta[i].urlVeiculo!="https://www.aptohome.com.br/img/sem_foto_icone.jpg" || data.alerta[i].urlVeiculo!="http://www.aptohome.com.br/img/sem_foto_icone.jpg") {
+                        if (data.alerta[i].urlVeiculo!="https://www.apptohome.com.br/img/sem_foto_icone.jpg" || data.alerta[i].urlVeiculo!="http://www.apptohome.com.br/img/sem_foto_icone.jpg") {
                             alertaveiculo = '<div class="alertaveiculohome">'+
                                                 '<div class="item-media" style="border:solid 4px '+data.alerta[i].corVeiculo+'">'+
                                                     '<img src="'+data.alerta[i].urlVeiculo+'" >'+
@@ -12281,7 +13313,7 @@ function bannercont(id){
         }
 
         $.ajax({
-            url: $server+"functionAppBanner.php?idbanner="+id+"&action=list",
+                        url: $server+"functionAppBanner.php?idbanner="+id+"&idmorador="+localStorage.getItem("moradorIdmorador")+"&idsindico="+localStorage.getItem("sindicoIdsindico")+"&idportaria="+localStorage.getItem("portariaIdportaria")+"&idadministradora="+localStorage.getItem("administradoraIdadministradora")+"&action=list",
             dataType : "json",
             success: function(data) {
             myApp.hideIndicator();
@@ -12296,7 +13328,7 @@ function bannercont(id){
                         imgBanner = '<img src="'+data.banner[i].urlBanner+'">';
                     }
                     if (data.banner[i].url!="") {
-                        linkurl = "onclick=openURLBrowser('"+data.banner[i].url+"');";
+                        linkurl = "onclick=clickbanner('"+data.banner[i].idBanner+"');openURLBrowser('"+data.banner[i].url+"');";
                     }
                     databanner = '<a href="#" '+linkurl+'>'+imgBanner+'</a>';
                     imgBanner = "";
@@ -12340,8 +13372,7 @@ function cameraBanner() {
     targetWidth: 1500,
     targetHeight: 2500,
     correctOrientation: true,
-    destinationType: Camera.DestinationType.DATA_URL,
-    saveToPhotoAlbum: true
+    destinationType: Camera.DestinationType.DATA_URL
     });
 }
 
@@ -12599,7 +13630,7 @@ function agendamentodeespaco() {
                                     '<div class="navbar">'+
                                         '<div class="navbar-inner">'+
                                             '<div class="left"><a href="#" class="open-panel link icon-only"><i class="icon icon-bars"></i></a></div>'+
-                                            '<div class="center">SELECIONE UM ESPAÇO</div>'+
+                                            '<div class="center">SELECIONE UMA OPÇÃO</div>'+
                                             '<div class="right"><a href="#" class="back link icon-only"><i class="icon icon-back"></i></a></div>'+
                                             '<div class="right no-margin"><a href="#index" class="link icon-only"><i class="icon fa fa-home"></i></a></div>'+
                                         '</div>'+
@@ -12656,7 +13687,7 @@ console.log("dia = "+dia+" local = "+idlocalespaco);
                                     '<div class="navbar">'+
                                         '<div class="navbar-inner">'+
                                             '<div class="left"><a href="#" class="open-panel link icon-only"><i class="icon icon-bars"></i></a></div>'+
-                                            '<div class="center">SELECIONE UM ESPAÇO</div>'+
+                                            '<div class="center">SELECIONE UMA OPÇÃO</div>'+
                                             '<div class="right"><a href="#" class="back link icon-only"><i class="icon icon-back"></i></a></div>'+
                                             '<div class="right no-margin"><a href="#index" class="link icon-only"><i class="icon fa fa-home"></i></a></div>'+
                                         '</div>'+
@@ -13404,7 +14435,11 @@ function limpar()
 
 /////////////////////////// push ///////////////////////////
 
-        document.addEventListener('app.Ready', onDeviceReady, true);
+        // habilita teste local
+        if ($$testelocal==false) {
+            document.addEventListener('app.Ready', onDeviceReady, true);
+        }
+
         function onDeviceReady() {
 
             //window.ga.startTrackerWithId("UA-108232712-1", 10);
@@ -13442,11 +14477,12 @@ function limpar()
 
             const push = PushNotification.init({
                 android: {
-                    senderID: "582224740202",
-                    icon: "iconnotification"
+                    senderID: $$senderID,
+                    icon: "iconnotification",
+                    iconColor: "#3f51b5"
                 },
                 ios: {
-                    senderID: "582224740202",
+                    senderID: $$senderID,
                     gcmSandbox: "false", // false para producao true para desenvolvimento
                     alert: "true",
                     sound: "true",
@@ -13494,13 +14530,13 @@ function limpar()
                     var sound;
                     if(device.platform.toLowerCase() === "android"){
                         //sound = "/android_asset/www/sounds/notification-android.mp3";
-                        sound = "https://www.aptohome.com.br/sounds/notification-android.mp3";
+                        sound = "https://www.apptohome.com.br/sounds/notification-android.mp3";
                         console.log("sound android: " + sound);
                     }else{
                         /*var path = window.location.pathname;
                         var sizefilename = path.length - (path.lastIndexOf("/")+1);
                         path = path.substr( path, path.length - sizefilename );*/
-                        sound = "https://www.aptohome.com.br/sounds/notification-ios.mp3";
+                        sound = "https://www.apptohome.com.br/sounds/notification-ios.mp3";
                         console.log("sound ios: " + sound);
                     }
                     var media = new Media(sound, mediaSuccess, mediaError);
@@ -13569,6 +14605,20 @@ function limpar()
                                 mainView.router.load({pageName: 'enquetescont'});
                                 enquetescont(data.additionalData.id,true);
                                 break;
+
+                                case 'chamadamorador':
+                                mainView.router.load({pageName: 'interfonecont'});
+                                chamadamorador(data.additionalData.id,data.additionalData.apto,data.additionalData.namefrom,data.additionalData.urlprofile);
+                                break;
+
+                                case 'banner':
+                                bannercont(data.additionalData.id,true);
+                                break;
+
+                                case 'assembleia':
+                                mainView.router.load({pageName: 'assembleiacont'});
+                                assembleiacont(data.additionalData.id,true);
+                                break;
                             }
                         }
                     });
@@ -13620,6 +14670,21 @@ function limpar()
                                 mainView.router.load({pageName: 'enquetescont'});
                                 enquetescont(data.additionalData.id,true);
                                 break;
+
+                                case 'chamadamorador':
+                                mainView.router.load({pageName: 'interfonecont'});
+                                chamadamorador(data.additionalData.id,data.additionalData.apto,data.additionalData.namefrom,data.additionalData.urlprofile);
+                                break;
+
+                                case 'banner':
+                                bannercont(data.additionalData.id,true);
+                                break;
+
+                                case 'assembleia':
+                                mainView.router.load({pageName: 'assembleiacont'});
+                                assembleiacont(data.additionalData.id,true);
+                                break;
+
                             }
 
                         console.log('CAPTURADO PUSH COM APP EM COLDSTART!');
@@ -13669,6 +14734,21 @@ function limpar()
                                 mainView.router.load({pageName: 'enquetescont'});
                                 enquetescont(data.additionalData.id,true);
                                 break;
+
+                                case 'chamadamorador':
+                                mainView.router.load({pageName: 'interfonecont'});
+                                chamadamorador(data.additionalData.id,data.additionalData.apto,data.additionalData.namefrom,data.additionalData.urlprofile);                                
+                                break;
+
+                                case 'banner':
+                                bannercont(data.additionalData.id,true);
+                                break;
+
+                                case 'assembleia':
+                                mainView.router.load({pageName: 'assembleiacont'});
+                                assembleiacont(data.additionalData.id,true);
+                                break;
+
                             }
                         console.log('CAPTURADO PUSH COM APP EM BACKGROUND!');  
                 }
@@ -13792,7 +14872,7 @@ $('.buttonshare').hide();
                             localStorage.setItem("idveiculoalerta", $$("#idveiculoalerta").val());
                             $('.buttonalertadechegada').html("CANCELAR AVISO"); 
                             // Android customization
-                            //cordova.plugins.backgroundMode.setDefaults({ title: 'Aviso de chegada ativado', ticker: 'Ticker', text:'Clique para voltar ao Aptohome'});
+                            //cordova.plugins.backgroundMode.setDefaults({ title: 'Aviso de chegada ativado', ticker: 'Ticker', text:'Clique para voltar ao Apptohome'});
                             // Enable background mode
                             //cordova.plugins.backgroundMode.enable();
                             
@@ -13947,7 +15027,7 @@ $('.buttonshare').hide();
                             $('.buttonpanico').html("CANCELAR PÂNICO");
                             $('.buttonalertadechegada').addClass("invisivel");
                             // Android customization
-                            //cordova.plugins.backgroundMode.setDefaults({ title: 'Aviso de chegada ativado', ticker: 'Ticker', text:'Clique para voltar ao Aptohome'});
+                            //cordova.plugins.backgroundMode.setDefaults({ title: 'Aviso de chegada ativado', ticker: 'Ticker', text:'Clique para voltar ao Apptohome'});
                             // Enable background mode
                             //cordova.plugins.backgroundMode.enable();
                             /*

@@ -6,6 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-eval' data: blob: filesystem: ws: gap://ready file: cdvfile: https://ssl.gstatic.com *; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'; img-src * data: 'unsafe-inline'; connect-src * 'unsafe-inline'; frame-src * gap://ready; child-src *;">
 
+    <meta http-equiv="cache-control" content="max-age=0" />
+    <meta http-equiv="cache-control" content="no-cache" />
+    <meta http-equiv="expires" content="0" />
+    <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+    <meta http-equiv="pragma" content="no-cache" />
+
     <link rel="stylesheet" href="framework7/css/framework7.material.css">
     <link rel="stylesheet" href="framework7/css/framework7.material.colors.css">
     <link rel="stylesheet" type="text/css" href="framework7/css/font-awesome.min.css" />
@@ -20,7 +26,7 @@
     </script>
     <script src="cordova.js"></script>
     <script src="xdk/init-dev.js"></script>
-    <script type="application/javascript" src="lib/jquery.min.js"></script>
+    <script type="application/javascript" src="lib/jquery-3.4.1.min.js"></script>
     <script type="text/javascript" src="framework7/js/framework7.js"></script>
 
     <script type="text/javascript" src="js/jquery.mask.js"></script>
@@ -64,8 +70,16 @@
                     <li class="menualerta">
                         <a href="#alertadechegada" class="panel-close" onclick="alertadechegada();"><i class="icon fa fa-car fa-lg color-amber"></i>AVISO DE CHEGADA</a>
                     </li>
+
+                   <li class="menuassembleia">
+                        <a href="#assembleia" class="panel-close" onclick="assembleia();"><i class="icon fa fa-check-square-o fa-lg color-cyan"></i>ASSEMBLEIA VIRTUAL</a>
+                    </li>
+                    <li class="menutaps">
+                        <a href="#" class="panel-close" onclick="bannercont('20');"><i class="icon fa fa-usd fa-lg color-green"></i>CRÉDITO PESSOAL</a>
+                    </li>
+
                     <li class="menuespaco">
-                        <a href="#agendamentodeespaco" class="panel-close agendamentodeespaco" onclick="agendamentodeespaco();"><i class="icon fa fa-calendar fa-lg color-red"></i>AGENDAMENTO DE ESPAÇOS</a>
+                        <a href="#agendamentodeespaco" class="panel-close agendamentodeespaco" onclick="agendamentodeespaco();"><i class="icon fa fa-calendar fa-lg color-red"></i>AGENDAMENTOS</a>
                     </li>
                     <li class="menuboletos">
                         <a href="#boletos" class="panel-close" onclick="boleto();"><i class="icon fa fa-file-text-o fa-lg color-lightgreen"></i>BOLETOS</a>
@@ -79,12 +93,18 @@
                     <li class="menucadastros">
                         <a href="#cadastros" class="panel-close"><i class="icon fa fa-male fa-lg color-brown"></i>CADASTROS</a>
                     </li>
-                    <li class="menutransparencia">
-                        <a href="#transparenciadecontastipo" onclick="transparenciadecontastipo();" class="panel-close"><i class="icon fa fa-calculator fa-lg color-orange"></i>DOCUMENTOS</a>
+
+                    <li class="menugetninjas">
+                        <a href="#getninjas" class="panel-close" onclick="getninjas();"><i class="icon fa fa-handshake-o fa-lg color-pink"></i>CONTRATAÇÃO DE SEVIÇOS</a>
                     </li>
                     <li class="menuenquetes">
                         <a href="#enquetes" class="panel-close" onclick="enquetes();"><i class="icon fa fa-check-square-o fa-lg color-deeporange"></i>ENQUETES</a>
                     </li>
+
+                    <li class="menutransparencia">
+                        <a href="#transparenciadecontastipo" onclick="transparenciadecontastipo();" class="panel-close"><i class="icon fa fa-calculator fa-lg color-orange"></i>DOCUMENTOS</a>
+                    </li>
+
                     <li class="menuanuncios">
                         <a href="#muraldeanuncios" class="panel-close" onclick="muraldeanuncios();"><i class="icon fa fa-shopping-cart fa-lg color-teal"></i>MURAL DE ANÚNCIOS</a>
                     </li>
@@ -144,8 +164,16 @@
                     <li class="menualerta">
                         <a href="#alertadechegada" class="item-link" onclick="alertadechegada();"><i class="icon fa fa-car fa-3x color-amber"></i><br>AVISO<br>DE CHEGADA</a>
                     </li>
+
+                    <li class="menuassembleia">
+                        <a href="#assembleia" class="item-link" onclick="assembleia();"><i class="icon fa fa-check-square-o fa-3x badgeassembleia color-cyan"></i><br>ASSEMBLEIA<br>VIRTUAL</a>
+                    </li>
+                    <li class="menutaps">
+                        <a href="#" class="item-link" onclick="bannercont('20');"><i class="icon fa fa-usd fa-3x color-green"></i><br>CRÉDITO PESSOAL<br><small>em apenas 2 passos</small></a>
+                    </li>
+
                     <li class="menuespaco">
-                        <a href="#agendamentodeespaco" class="item-link agendamentodeespaco" onclick="agendamentodeespaco();"><i class="icon fa fa-calendar fa-3x badgeespaco color-red"></i><br>AGENDAMENTO<br>DE ESPAÇOS</a>
+                        <a href="#agendamentodeespaco" class="item-link agendamentodeespaco" onclick="agendamentodeespaco();"><i class="icon fa fa-calendar fa-3x badgeespaco color-red"></i><br>AGENDAMENTOS<br>DO CONDOMÍNIO</a>
                     </li>
                     <li class="menuboletos">
                         <a href="#boletos" onclick="boleto();" class="item-link"><i class="icon fa fa-file-text-o fa-3x color-lightgreen"></i><br>BOLETOS<br>DO CONDOMÍNIO</a>
@@ -159,12 +187,18 @@
                     <li class="menucadastros">
                         <a href="#cadastros" class="item-link"><i class="icon fa fa-male fa-3x color-brown"></i><br>CADASTROS<br>DO CONDOMÍNIO</a>
                     </li>
-                    <li class="menutransparencia">
-                        <a href="#transparenciadecontastipo" class="item-link" onclick="transparenciadecontastipo();"><i class="icon fa fa-calculator fa-3x badgetransparencia color-orange"></i><br>DOCUMENTOS<br>DO CONDOMÍNIO</a>
+
+                   <li class="menugetninjas">
+                        <a href="#getninjas" class="item-link" onclick="getninjas();"><i class="icon fa fa-handshake-o fa-3x color-pink"></i><br>CONTRATAÇÃO <br>DE SERVIÇOS<br><small> GetNinjas</small></a>
                     </li>
                     <li class="menuenquetes">
                         <a href="#enquetes" class="item-link" onclick="enquetes();"><i class="icon fa fa-check-square-o fa-3x color-deeporange"></i><br>ENQUETES<br>DO CONDOMÍNIO</a>
                     </li>
+
+                    <li class="menutransparencia">
+                        <a href="#transparenciadecontastipo" class="item-link" onclick="transparenciadecontastipo();"><i class="icon fa fa-calculator fa-3x badgetransparencia color-orange"></i><br>DOCUMENTOS<br>DO CONDOMÍNIO</a>
+                    </li>
+
                     <li class="menuanuncios">
                         <a href="#muraldeanuncios" onclick="muraldeanuncios();" class="item-link" ><i class="icon fa fa-shopping-cart fa-3x color-teal"></i><br>MURAL<br>DE ANÚNCIOS</a>
                     </li>
@@ -180,10 +214,27 @@
                     <li class="menucronograma">
                         <a href="#cronograma" class="item-link" onclick="cronograma();"><i class="icon fa fa-users fa-3x color-green"></i><br>EQUIPE DO<br>CONDOMÍNIO</a>
                     </li>
-                    <!--<li class="menusair">
-                        <a href="#" class="sair" onclick="sair();"><i class="icon fa fa-sign-out fa-3x"></i><br>SAIR DO<br>APP</a>
-                    </li>-->
                   </ul>
+              </div>
+            </div>
+
+            <!-- getninjas -->
+            <div data-page="getninjas" class="page cached">
+
+              <div class="navbar">
+                <div class="navbar-inner">
+                  <div class="left"><a href="#" class="open-panel link icon-only"><i class="icon icon-bars"></i></a></div>
+                    <div class="center">CONTRATAÇÃO DE SERVIÇOS</div>
+                    <div class="right"><a href="#" class="back link icon-only"><i class="icon icon-back"></i></a></div>
+                    <div class="right no-margin"><a href="#index" class="link icon-only"><i class="icon fa fa-home"></i></a></div>
+                </div>
+              </div>
+
+
+              <div class="page-content">
+                <div class="content-block boletos-100">  
+                  <iframe src="" class="iframe-boleto" target="_self"></iframe>
+                </div>
               </div>
             </div>
 
@@ -737,7 +788,7 @@
             <div class="navbar">
               <div class="navbar-inner">
                 <div class="left"><a href="#" class="open-panel link icon-only"><i class="icon icon-bars"></i></a></div>
-                  <div class="center">AGENDAMENTO DE ESPAÇOS</div>
+                  <div class="center">AGENDAMENTOS DO CONDOMÍNIO</div>
                   <div class="right"><a href="#index" class="link icon-only"><i class="icon icon-back"></i></a></div>
                   <div class="right no-margin"><a href="#index" class="link icon-only"><i class="icon fa fa-home"></i></a></div>
               </div>
@@ -758,7 +809,7 @@
                                 <div class="item-content">
                                   <div class="item-inner">
                                     <!-- Select label -->
-                                    <div class="item-title">Selecione o espaço:</div>
+                                    <div class="item-title">Selecione uma opção:</div>
                                     <!-- Selected value, not required -->
                                     <div class="item-after selecionarespaco"></div>
                                   </div>
@@ -804,7 +855,7 @@
             <div class="navbar">
               <div class="navbar-inner">
                 <div class="left"><a href="#" class="open-panel link icon-only"><i class="icon icon-bars"></i></a></div>
-                  <div class="center">AGENDAMENTO DE ESPAÇOS</div>
+                  <div class="center">AGENDAMENTO DO CONDOMÍNIO</div>
                   <div class="right"><a href="#" class="back link icon-only"><i class="icon icon-back"></i></a></div>
                   <div class="right no-margin"><a href="#index" class="link icon-only"><i class="icon fa fa-home"></i></a></div>
               </div>
@@ -1070,6 +1121,24 @@
                 <div class="pull-to-refresh-arrow"></div>
               </div>
               <div class="content-block">
+                <div class="list-block nomargin tablet">
+                    <ul>
+                        <!-- Smart select item -->
+                        <li>
+                          <!-- Additional "smart-select" class -->
+                          <a href="#" class="item-link actionOptionCatAnun">
+                            <div class="item-content">
+                              <div class="item-inner">
+                                <!-- Select label -->
+                                <div class="item-title">Selecionar categoria:</div>
+                                <!-- Selected value, not required -->
+                                <div class="item-after selecionarcatanuncio"></div>
+                              </div>
+                            </div>
+                          </a>
+                        </li>
+                    </ul>
+                </div>
                 <div class="list-block media-list tablet">
                   <ul id="muraldeanuncios-cont">
                   </ul>
@@ -1696,6 +1765,115 @@
             </div>
           </div>
 
+          <!-- assembleia -->
+          <div data-page="assembleia" class="page cached">
+
+            <div class="navbar">
+              <div class="navbar-inner">
+                <div class="left"><a href="#" class="open-panel link icon-only"><i class="icon icon-bars"></i></a></div>
+                  <div class="center">ASSEMBLEIA</div>
+                  <div class="right"><a href="#index" class="link icon-only"><i class="icon icon-back"></i></a></div>
+                  <div class="right no-margin"><a href="#index" class="link icon-only"><i class="icon fa fa-home"></i></a></div>
+              </div>
+            </div>
+
+            
+            <!--<a href="#inserirassembleia" id="inserirassembleia" class="inserirassembleia floating-button bg-green">
+              <i class="icon icon-plus"></i>
+            </a>-->
+              <div class="page-content assembleia pull-to-refresh-content">
+                <div class="pull-to-refresh-layer">
+                  <div class="preloader"></div>
+                  <div class="pull-to-refresh-arrow"></div>
+                </div>
+                  <div class="list-block media-list tablet">
+                    <ul id="assembleia-cont"></ul>
+                  </div>
+              </div>
+          </div>
+
+          <!-- assembleia conteudo -->
+          <div data-page="assembleiacont" class="page cached">
+
+            <div class="navbar">
+              <div class="navbar-inner">
+                <div class="left"><a href="#" class="open-panel link icon-only"><i class="icon icon-bars"></i></a></div>
+                  <div class="center">ASSEMBLEIA VIRTUAL</div>
+                  <div class="right"><a href="#assembleia" class="back link icon-only"><i class="icon icon-back"></i></a></div>
+                  <div class="right no-margin"><a href="#index" class="link icon-only"><i class="icon fa fa-home"></i></a></div>
+              </div>
+            </div>
+
+            <div class="page-content">
+                <div class="list-block media-list tablet">
+                    <ul id="assembleiacont-cont"></ul>
+                    <ul>
+                        <li>
+                            <div class="card-content-inner">
+                                <p class="facebook-title">Pautas</p>
+                            </div>
+                        </li>
+                    </ul>
+                    <ul id="pauta-cont"></ul>
+                </div>
+            </div>
+          </div>
+
+          <!-- pautas conteudo -->
+          <div data-page="pautacont" class="page cached">
+
+            <div class="navbar">
+              <div class="navbar-inner">
+                <div class="left"><a href="#" class="open-panel link icon-only"><i class="icon icon-bars"></i></a></div>
+                  <div class="center">PAUTA</div>
+                  <div class="right"><a href="#pauta" class="back link icon-only"><i class="icon icon-back"></i></a></div>
+                  <div class="right no-margin"><a href="#index" class="link icon-only"><i class="icon fa fa-home"></i></a></div>
+              </div>
+            </div>
+
+            <div class="page-content">
+                <div class="list-block media-list tablet">
+                    <ul id="pautacont-cont"></ul>
+                    <ul id="pautacontbut-cont">
+                        <li>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <p class="buttons-row">
+                                        <a href="#" id="butinserirresppauta" class="button button-big button-fill button-raised color-green">ENVIAR RESPOSTA</a>
+                                    </p>
+                                    <p class="buttons-row">
+                                        <a href="#pautaresultado" onclick="" id="butverresultadopauta" class="button button-big button-fill button-raised color-orange">VER RESULTADO</a>
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="list-block media-list tablet">
+                    <ul id="pautarespcont-cont"></ul>
+                    </div>
+                    <div class="resppauta-cont tablet"></div>
+                </div>
+            </div>
+          </div>
+
+          <!-- pauta resultado -->
+          <div data-page="pautaresultado" class="page cached">
+
+            <div class="navbar">
+              <div class="navbar-inner">
+                <div class="left"><a href="#" class="open-panel link icon-only"><i class="icon icon-bars"></i></a></div>
+                  <div class="center">RESULTADO PAUTA</div>
+                  <div class="right"><a href="#pautacont" class="back link icon-only"><i class="icon icon-back"></i></a></div>
+                  <div class="right no-margin"><a href="#index" class="link icon-only"><i class="icon fa fa-home"></i></a></div>
+              </div>
+            </div>
+
+            <div class="page-content">
+                <div class="list-block media-list tablet">
+                  <ul id="pautaresultado-cont"></ul>
+                </div>
+            </div>
+          </div>
 
           <!-- enquetes -->
           <div data-page="enquetes" class="page cached">
@@ -3220,6 +3398,15 @@
       <div class="banner-full"></div>
     </div>
 
+    <!-- banner conteudo tap -->
+    <div class="page cached popup popup-bannercont-tap tablet-fullscreen">     
+      <!-- Floatin Action Button -->
+      <a href="#" class="close-popup floating-top white bg-orange">
+        <i class="fa fa-times"></i>
+      </a>
+      <div class="banner-full-tap"></div>
+    </div>
+
     <!-- help -->
     <div class="popup popup-help tablet-fullscreen"> 
         <!-- Floatin Action Button -->
@@ -3260,6 +3447,9 @@
                       <div class="item-input">
                         <input type="password" name="password" onKeyUp="tabenter(event,getElementById('entrar'))" id="password" placeholder="Digite sua senha">
                       </div>
+                    </div>
+                    <div class="viewpassword">
+                        <i class="icon fa fa-eye-slash"></i>
                     </div>
                   </li>
                 </ul>
